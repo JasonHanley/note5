@@ -1,0 +1,12 @@
+<?php
+
+class DBConfig {
+  public static $dbhost = '';
+  public static $dbname = '';
+  public static $dbuser = '';
+  public static $dbpass = '';
+};
+
+class Security {
+  public static $URL = 'http://localhost'; 
+};

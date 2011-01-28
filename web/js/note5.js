@@ -10,6 +10,7 @@ var Note5 = {
   updateTime: 500,
   localStorageKey: 'Note5.notes',
   init: function() {
+    window.onerror = this.errorHandler;
     this.doc.view = this.view;
     this.view.doc = this.doc;
     this.setupButtonHandlers();
@@ -52,7 +53,7 @@ var Note5 = {
       return -1;
     },
     
-    // Save to local storage (required HTML5 support)
+    // Save to local storage (requires HTML5 support)
     saveLocal: function() {
       currentNoteName = ''; 
       if(this.currentNoteIndex >= 0)
@@ -66,7 +67,7 @@ var Note5 = {
       }
     },
     
-    // Load from local storage (required HTML5 support)
+    // Load from local storage (requires HTML5 support)
     loadLocal: function() {
       if(window.localStorage) {
         json = window.localStorage.getItem(Note5.localStorageKey);
@@ -227,6 +228,40 @@ var Note5 = {
     localStorage.removeItem(Note5.localStorageKey);
     $('#saved_message').html('Application has been reset: '+(new Date()).get8601Time());
   },
+  
+  errorHandler: function(errMsg, errUrl, errLine) {
+    var errData = {
+        version: note5fileVersion,
+        type: -1,
+        msg: errMsg,
+        url: errUrl,
+        line: errLine,
+        appCodeName: navigator.appCodeName,
+        appName: navigator.appName,
+        appVersion: navigator.appVersion,
+        cookieEnabled: navigator.cookieEnabled,
+        platform: navigator.platform,
+        userAgent: navigator.userAgent
+    };
+    
+    jsonData = JSON.stringify(errData);
+    
+    data = jsonData.urlEncode();
+    
+    $.get('api/?action=log&type=-1&data='+data, function(data) {$('#error-return').html(data)} );
+    
+    $( "#dialog-error" ).dialog({
+      resizable: false,
+      //height:'15em',
+      modal: true,
+      buttons: {
+        "Argh!": function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });    
+    
+  },
+  
   dummy: null
 };
-

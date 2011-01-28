@@ -17,14 +17,24 @@ if(isset($_GET['debug']) && $_GET['debug']) {
 // (modified to actually work)
 function autoVer($url) {
 	global $debug;
-	if($debug)
-	  {echo $url; return;}
 	
   $abspath = dirname(__FILE__);
   $path = pathinfo($url);
   $ver = '..'.filemtime($abspath.'/'.$url).'.';
+  
+  if($debug)
+    {echo $url; return;}
+  
   echo $path['dirname'].'/'.$path['filename'].$ver.$path['extension'];
-} ?>
+} 
+
+$abspath = dirname(__FILE__);
+$path = pathinfo($url);
+$ver = filemtime($abspath);
+
+echo '<script>var note5fileVersion='.$ver.';</script>';
+
+?>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
@@ -81,6 +91,10 @@ function autoVer($url) {
       <?php if($debug): ?>
         <br />
         <a href="#" onclick="Note5.resetApplication();">Reset Application</a>
+        <br />
+        <a href="#" onclick="testerrordfunctiondoesnotexist();">Test Error</a>
+        <br />
+        <a href="#" onclick="Note5.errorHandler('Msg','Url','Line');">Test Error 2</a>
       <?php endif ?>
     </div>
     
@@ -90,6 +104,13 @@ function autoVer($url) {
 
   <div id="dialog-confirm-delete" title="Confirm delete" style="display:none;">
     This item will be permanently deleted. Recovery will not be possible.
+  </div>
+
+  <div id="dialog-error" title="Error" style="display:none;">
+    We're very sorry, but there's been an error. It may be a problem with your browser.<br /><br />
+    It is being logged right now and will attempt to fix it! Please check back in a few days.<br /><br />
+    Sorry for the trouble, and thanks for your patience!
+    <div id="error-return"></div>
   </div>
 
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
