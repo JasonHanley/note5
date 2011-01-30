@@ -4,3 +4,5 @@
 /.project
 /todo.txt
 /notes.txt
+/api/config-remote.php
+/api/config-local.php
