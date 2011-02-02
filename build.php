@@ -62,11 +62,11 @@ if($manifestFile) {
     fputs($manifestFile, $filename."\n");
   }
   fclose($manifestFile);
-  echo 'Manifest file created.';
+  echo "Manifest file created.\n";
 } else {
-  echo 'Error opening Manifest file.';
+  echo "Error opening Manifest file.\n";
 }
 
 // Always rebuild index
 shell_exec('php index.php '.$debugString.' > web/index.html');
-echo 'Index rebuilt.';
+echo "Index rebuilt.\n";
