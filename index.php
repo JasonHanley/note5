@@ -84,13 +84,15 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
 
     <div id="config" style="display:none">
       <h2>About note5: An HTML5 Notepad</h2>
-      Inspired by the iPad "Notes" application.<br />
-      <br />
-      Very simple. Just start typing. Everything is saved to your system automatically.</br />
-      </br />
-      By: <a href="http://www.jasonhanley.com/" target="_">Jason M. Hanley</a><br />
-      <br />
+      Inspired by the iPad "Notes" application.
+      <br /><br />
+      Very simple. Just start typing. Everything is saved to your system automatically.
+      </br /></br />
+      By: <a href="http://www.jasonhanley.com/" target="_">Jason M. Hanley</a>
+      <br /><br />
       Available at the <a href="https://chrome.google.com/webstore/detail/olhhcobmolooljldnlapkgfnompogplm" target="_">Chrome Web Store</a>
+      <br /><br />
+      Version: <?php echo date('Y-m-d G:i:s', time())?>
       <?php if($debug): ?>
         <br />
         <a href="#" onclick="Note5.resetApplication();">Reset Application</a>

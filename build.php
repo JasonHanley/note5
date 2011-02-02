@@ -35,6 +35,8 @@ if($argc > 1) {
 // Always build manifest
 $files = array();
 
+touch('web/js/dummy.js');
+
 addFiles($files, 'favicon.ico');
 addFiles($files, 'css/*.css', true);
 addFiles($files, 'css/smoothness/*.css', true);
