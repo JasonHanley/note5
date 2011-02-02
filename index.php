@@ -1,10 +1,5 @@
 <!doctype html>  
-
-<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6"> <![endif]-->
-<!--[if IE 7 ]>    <html lang="en" class="no-js ie7"> <![endif]-->
-<!--[if IE 8 ]>    <html lang="en" class="no-js ie8"> <![endif]-->
-<!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
-<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js" manifest="cache.manifest"> <!--<![endif]-->
+<html manifest="cache.manifest">
 <head>
 <?php
 $debug = false;
@@ -42,11 +37,12 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
   <meta name="description" content="Inspired by the iPad 'Notes' application. Very simple. Just start typing. Everything is saved to your system automatically.">
   <meta name="author" content="Jason M. Hanley">
 
+  <link rel="shortcut icon" href="favicon.ico">
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <?php /* <meta name="apple-mobile-web-app-capable" content="yes"  /> */ ?>
-  
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes"  />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />  
+  <link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png">
 
   <link rel="stylesheet" href="<?php autoVer('css/style.css')?>">
   <link rel="stylesheet" href="<?php autoVer('css/smoothness/jquery-ui-1.8.9.custom.css')?>">

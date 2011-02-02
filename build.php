@@ -38,6 +38,7 @@ $files = array();
 touch('web/js/dummy.js');
 
 addFiles($files, 'favicon.ico');
+addFiles($files, 'apple-touch-icon.png');
 addFiles($files, 'css/*.css', true);
 addFiles($files, 'css/smoothness/*.css', true);
 addFiles($files, 'js/*.js', true);
