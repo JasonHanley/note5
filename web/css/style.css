@@ -116,6 +116,10 @@ h2 {
   background: #ffc;
   padding: .3em;
   width: 98%;
+  -moz-border-radius: 5px; 
+  -webkit-border-radius: 5px;
+  -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
 }
 
 #saved {
