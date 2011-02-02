@@ -28,7 +28,7 @@ var Note5 = {
       this.view.refreshNote();
     }
     
-    CacheHelper.setStatusDiv('#offlineStatus'); 
+    //CacheHelper.setStatusDiv('#offlineStatus'); 
   },
   
   // Document subclass
