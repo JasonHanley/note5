@@ -98,9 +98,9 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
         <a href="#" onclick="testerrordfunctiondoesnotexist();">Test Error</a>
         <br />
         <a href="#" onclick="Note5.errorHandler('Msg','Url','Line');">Test Error 2</a>
+        <br /><br />
+        Offline status: <span id="offlineStatus"></span>
       <?php endif ?>
-      <br /><br />
-      Offline status: <span id="offlineStatus"></span>
     </div>
     
     <footer>
