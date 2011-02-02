@@ -124,13 +124,14 @@ RewriteRule ^(js|css)/(.+)\.\.(.+)\.(js|css)$ $1/$2.$4 [L]
   ExpiresActive on
 
 # Perhaps better to whitelist expires rules? Perhaps.
-  ExpiresDefault                          "access plus 1 month"
+  ExpiresDefault                          "access plus 0 seconds"
 
 # cache.manifest needs re-requests in FF 3.6 (thx Remy ~Introducing HTML5)
   ExpiresByType text/cache-manifest       "access plus 0 seconds"
 
 # your document html 
   ExpiresByType text/html                 "access plus 0 seconds"
+  ExpiresByType application/x-httpd-php   "access plus 0 seconds"
   
 # data
   ExpiresByType text/xml                  "access plus 0 seconds"

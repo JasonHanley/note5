@@ -27,6 +27,8 @@ var Note5 = {
       this.view.refreshSavedArea();
       this.view.refreshNote();
     }
+    
+    CacheHelper.setStatusDiv('#offlineStatus'); 
   },
   
   // Document subclass
@@ -243,6 +245,9 @@ var Note5 = {
         platform: navigator.platform,
         userAgent: navigator.userAgent
     };
+    
+    if(typeof(errData.msg) != 'string')
+      errData.msg = 'Unknown (not string)';
     
     jsonData = JSON.stringify(errData);
     

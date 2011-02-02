@@ -8,7 +8,7 @@
 <head>
 <?php
 $debug = false;
-if(isset($_GET['debug']) && $_GET['debug']) {
+if(isset($_GET['debug']) && $_GET['debug'] || $argc > 1 && in_array('debug', $argv)) {
 	$debug = true;
 	echo '<script>var debugMode = '.$debug.';</script>';
 }
@@ -18,7 +18,7 @@ if(isset($_GET['debug']) && $_GET['debug']) {
 function autoVer($url) {
 	global $debug;
 	
-  $abspath = dirname(__FILE__);
+  $abspath = dirname(__FILE__).'/web';
   $path = pathinfo($url);
   $ver = '..'.filemtime($abspath.'/'.$url).'.';
   
@@ -71,6 +71,7 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
       <form>
         <textarea id="note" rows="12"></textarea>
         <div id="help">Text area will auto-expand as you type. Changes are auto-saved.</div>
+        <?php if($debug) echo 'Timestamp: '.time(); ?>
       </form>
     </div>
     
@@ -98,6 +99,8 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
         <br />
         <a href="#" onclick="Note5.errorHandler('Msg','Url','Line');">Test Error 2</a>
       <?php endif ?>
+      <br /><br />
+      Offline status: <span id="offlineStatus"></span>
     </div>
     
     <footer>

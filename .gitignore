@@ -6,3 +6,5 @@
 /notes.txt
 /api/config-remote.php
 /api/config-local.php
+/web/index.html
+/web/cache.manifest

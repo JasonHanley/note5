@@ -51,3 +51,66 @@ Element.prototype.resize = function() {
     }
   }
 };
+
+var CacheHelper = {
+  getTextStatus: function() {
+    var appCache = window.applicationCache;
+  
+    switch (appCache.status) {
+      case appCache.UNCACHED: // UNCACHED == 0
+        return 'UNCACHED';
+        break;
+      case appCache.IDLE: // IDLE == 1
+        return 'IDLE';
+        break;
+      case appCache.CHECKING: // CHECKING == 2
+        return 'CHECKING';
+        break;
+      case appCache.DOWNLOADING: // DOWNLOADING == 3
+        return 'DOWNLOADING';
+        break;
+      case appCache.UPDATEREADY:  // UPDATEREADY == 5
+        return 'UPDATEREADY';
+        break;
+      case appCache.OBSOLETE: // OBSOLETE == 5
+        return 'OBSOLETE';
+        break;
+      default:
+        return 'UKNOWN CACHE STATUS';
+        break;
+    };
+  },
+  
+  setStatusDiv: function (divName) {
+    var cache = window.applicationCache;
+
+    cache.addEventListener("cached", function () {
+      $(divName).html("Cached (working normally)");
+    }, false);
+    cache.addEventListener("checking", function () {
+      $(divName).html("Checking manifest");
+    }, false);
+    cache.addEventListener("downloading", function () {
+      $(divName).html("Starting download of cached files");
+    }, false);
+    cache.addEventListener("error", function (e) {
+      $(divName).html("There was an error in the manifest, downloading cached files or you're offline: " + e);
+    }, false);
+    cache.addEventListener("noupdate", function () {
+      $(divName).html("No update needed (working normally)");
+    }, false);
+    cache.addEventListener("progress", function () {
+      $(divName).html("Downloading cached files");
+    }, false);
+    cache.addEventListener("updateready", function () {
+      cache.swapCache();
+      $(divName).html("Updated cache is ready");
+      // Even after swapping the cache the currently loaded page won't use it
+      // until it is reloaded, so force a reload so it is current.
+      window.location.reload(true);
+      console.log("Window reloaded");
+    }, false);    
+    
+  }
+    
+};

@@ -1,5 +1,9 @@
 <?php
 
+// NOTES:
+// - php must be in your path
+// - git must be in your path if you want to use 'update'
+
 function addFiles(&$files, $pattern, $autoversion = false) {
   $abspath = dirname(__FILE__).'/web';
   $abspathLen = strlen($abspath)+1;
@@ -16,33 +20,53 @@ function addFiles(&$files, $pattern, $autoversion = false) {
   }
 }
 
-if($argc > 1) {
-  if(in_array('manifest', $argv)) {
-    
-    // Build manifest file
-    $files = array();
+$debug = false;
+$debugString = '';
 
-    addFiles($files, 'favicon.ico');
-    addFiles($files, 'css/*.css', true);
-    addFiles($files, 'css/smoothness/*.css', true);
-    addFiles($files, 'js/*.js', true);
-    addFiles($files, 'js/libs/modernizr-1.6.min.js');
-    addFiles($files, 'js/libs/json2-min.js', true);
-    addFiles($files, 'js/libs/localstorage.js', true);
-    addFiles($files, 'images/*', true);
-    addFiles($files, 'css/smoothness/images/*', true);
-    array_push($files, 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js');
-    array_push($files, 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.min.js');
-    
-    $manifestFile = fopen('web/cache.manifest', 'wb');
-    if($manifestFile) {
-      fputs($manifestFile, "CACHE MANIFEST\n");
-      foreach($files as $filename) {
-        fputs($manifestFile, $filename."\n");
-      }
-      echo 'Manifest file created.';
-    } else {
-      echo 'Error opening Manifest file.';
-    }
+if($argc > 1) {
+  
+  // Check for debugging mode
+  if(in_array('debug', $argv)) {
+    $debug = true;
+    $debugString = 'debug';
+  }
+  
+  // Pull the latest source
+  if(in_array('update', $argv)) {
+    shell_exec('git pull');
   }
 }
+
+// Always build manifest
+$files = array();
+
+addFiles($files, 'favicon.ico');
+addFiles($files, 'css/*.css', true);
+addFiles($files, 'css/smoothness/*.css', true);
+addFiles($files, 'js/*.js', true);
+addFiles($files, 'js/libs/json2-min.js', true);
+addFiles($files, 'js/libs/localstorage.js', true);
+addFiles($files, 'js/libs/modernizr-1.6.min.js');
+addFiles($files, 'images/*');
+addFiles($files, 'css/smoothness/images/*');
+array_push($files, 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js');
+array_push($files, 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.min.js');
+array_push($files, "\nNETWORK:");
+array_push($files, './api/*');
+array_push($files, 'http://www.google-analytics.com/ga.js');
+
+$manifestFile = fopen('web/cache.manifest', 'wb');
+if($manifestFile) {
+  fputs($manifestFile, "CACHE MANIFEST\n");
+  foreach($files as $filename) {
+    fputs($manifestFile, $filename."\n");
+  }
+  fclose($manifestFile);
+  echo 'Manifest file created.';
+} else {
+  echo 'Error opening Manifest file.';
+}
+
+// Always rebuild index
+shell_exec('php index.php '.$debugString.' > web/index.html');
+echo 'Index rebuilt.';
