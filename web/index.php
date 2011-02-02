@@ -43,6 +43,8 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
   <meta name="author" content="Jason M. Hanley">
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  
   <link rel="shortcut icon" href="/favicon.ico">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
