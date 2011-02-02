@@ -10,7 +10,7 @@ var Note5 = {
   updateTime: 500,
   localStorageKey: 'Note5.notes',
   init: function() {
-    window.onerror = this.errorHandler;
+    //window.onerror = this.errorHandler; *** Completely disable error handling until we can figure out how to make it work offline
     this.doc.view = this.view;
     this.view.doc = this.doc;
     this.setupButtonHandlers();
