@@ -255,6 +255,7 @@ var Note5 = {
     
     $.get('api/?action=log&type=-1&data='+data, function(data) {$('#error-return').html(data)} );
     
+    /* Quiet errors for now
     $( "#dialog-error" ).dialog({
       resizable: false,
       //height:'15em',
@@ -264,7 +265,8 @@ var Note5 = {
           $( this ).dialog( "close" );
         }
       }
-    });    
+    });
+    */    
     
   },
   
