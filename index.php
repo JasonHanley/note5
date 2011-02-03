@@ -132,7 +132,7 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
     <script src="js/libs/dd_belatedpng.js"></script>
     <script> DD_belatedPNG.fix('img, .png_bg'); </script>
   <![endif]-->
-<?php /* Disable Analytics for now
+
 <script type="text/javascript">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-74505-25']);
@@ -144,7 +144,6 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
   })();
 </script>
-*/ ?>
 
 </body>
 </html>

@@ -49,15 +49,12 @@ addFiles($files, 'images/*');
 addFiles($files, 'css/smoothness/images/*');
 array_push($files, 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js');
 array_push($files, 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.min.js');
-//array_push($files, 'http://www.google-analytics.com/ga.js');
-//array_push($files, 'http://www.google-analytics.com/__utm.gif');
 
-//array_push($files, "\nFALLBACK:");
-//array_push($files, 'api/* offline.html');
-//array_push($files, 'http://www.google-analytics.com/* offline.html');
+array_push($files, "\nFALLBACK:");
+array_push($files, '/ offline.html');
 
-//array_push($files, "\nNETWORK:");
-//array_push($files, '*');
+array_push($files, "\nNETWORK:");
+array_push($files, '*');
 
 $manifestFile = fopen('web/cache.manifest', 'wb');
 if($manifestFile) {
