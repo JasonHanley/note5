@@ -22,11 +22,18 @@ var Note5 = {
     // If there are no notes, create one
     if(this.doc.notes.length < 1) {
       this.cmdNew();
+      $('#note').html('Just start typing. Your changes will be auto-saved.');
+      $('#note').focus();
+      $('#note').select();
     }
     else {
       this.view.refreshSavedArea();
       this.view.refreshNote();
     }
+    
+    // Resize the app window
+    $(window).resize(this.onresize);
+    this.onresize();
     
     //CacheHelper.setStatusDiv('#offlineStatus'); 
   },
@@ -104,7 +111,7 @@ var Note5 = {
       }
       
       // Resize note area, if necessary
-      $('#note').get(0).resize();
+      //$('#note').get(0).resize();
       
       // Save note content to doc
       this.doc.updateCurrent(noteVal);
@@ -231,6 +238,15 @@ var Note5 = {
     $('#saved_message').html('Application has been reset: '+(new Date()).get8601Time());
   },
   
+  //Resize the app window as necessary
+  onresize: function() {
+    var docHeight=window.innerHeight;
+    var docWidth=window.innerWidth;
+    var navHeight=$('#nav').height();
+    $('#note').css('width', docWidth-40);
+    $('#note').css('height', docHeight-navHeight-40);
+  },
+  
   errorHandler: function(errMsg, errUrl, errLine) {
     var errData = {
         version: note5fileVersion,
@@ -272,3 +288,4 @@ var Note5 = {
   
   dummy: null
 };
+

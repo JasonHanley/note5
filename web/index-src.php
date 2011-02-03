@@ -13,7 +13,7 @@ if(isset($_GET['debug']) && $_GET['debug'] || $argc > 1 && in_array('debug', $ar
 function autoVer($url) {
 	global $debug;
 	
-  $abspath = dirname(__FILE__).'/web';
+  $abspath = dirname(__FILE__);
   $path = pathinfo($url);
   $ver = '..'.filemtime($abspath.'/'.$url).'.';
   
@@ -52,7 +52,7 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
 <body>
 
   <div id="container">
-    <header>
+    <header id="header">
 			<nav id="nav">
         <ul>
           <li><a id="button_home" href="#" class="awesome icon"><img src="images/gnome_home.png" class="icon" alt="Home" title="Home" /></a></li>
@@ -65,9 +65,7 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
     
     <div id="main">
       <form>
-        <textarea id="note" rows="12"></textarea>
-        <div id="help">Text area will auto-expand as you type. Changes are auto-saved.</div>
-        <?php if($debug) echo 'Timestamp: '.time(); ?>
+        <textarea id="note"></textarea>
       </form>
     </div>
     
@@ -127,11 +125,6 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
       Note5.init();    
   });
   </script>
-  
-  <!--[if lt IE 7 ]>
-    <script src="js/libs/dd_belatedpng.js"></script>
-    <script> DD_belatedPNG.fix('img, .png_bg'); </script>
-  <![endif]-->
 
 <script type="text/javascript">
   var _gaq = _gaq || [];
