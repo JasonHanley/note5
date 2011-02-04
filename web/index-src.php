@@ -1,13 +1,13 @@
 <!doctype html>  
-<html manifest="cache.manifest">
-<head>
 <?php
 $debug = false;
 if(isset($_GET['debug']) && $_GET['debug'] || $argc > 1 && in_array('debug', $argv)) {
-	$debug = true;
-	echo '<script>var debugMode = '.$debug.';</script>';
-}
-
+  $debug = true;
+  echo '<script>var debugMode = '.$debug.';</script>';
+}?>
+<html <?php if(!$debug) echo 'manifest="cache.manifest"'; ?>>
+<head>
+<?php
 // http://particletree.com/notebook/automatically-version-your-css-and-javascript-files/
 // (modified to actually work)
 function autoVer($url) {
@@ -42,7 +42,7 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="apple-mobile-web-app-capable" content="yes"  />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />  
-  <link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
   <link rel="stylesheet" href="<?php autoVer('css/style.css')?>">
   <link rel="stylesheet" href="<?php autoVer('css/smoothness/jquery-ui-1.8.9.custom.css')?>">
@@ -75,13 +75,14 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
 	    </div>
       <div id="saved_message"></div>
     </div>
-
+    
     <div id="config" style="display:none">
       <h2>About note5: An HTML5 Notepad</h2>
+      <span style="float:left;"><img src="apple-touch-icon.png" style="width:5em; height:5em; margin:.5em;" /></span>
       Inspired by the iPad "Notes" application.
       <br /><br />
       Very simple. Just start typing. Everything is saved to your system automatically.
-      </br /></br />
+      <br /><br />
       By: <a href="http://www.jasonhanley.com/" target="_">Jason M. Hanley</a>
       <br /><br />
       Available at the <a href="https://chrome.google.com/webstore/detail/olhhcobmolooljldnlapkgfnompogplm" target="_">Chrome Web Store</a>

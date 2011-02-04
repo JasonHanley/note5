@@ -34,6 +34,7 @@ var Note5 = {
     // Resize the app window
     $(window).resize(this.onresize);
     this.onresize();
+    window.onorientationchange=this.onresize; // for iOS
     
     //CacheHelper.setStatusDiv('#offlineStatus'); 
   },
