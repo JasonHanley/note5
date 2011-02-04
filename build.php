@@ -35,7 +35,7 @@ if($argc > 1) {
 // Always build manifest
 $files = array();
 
-touch('web/js/dummy.js');
+array_push($files, '# Version '.time());
 
 addFiles($files, 'favicon.ico');
 addFiles($files, 'apple-touch-icon.png');
