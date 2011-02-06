@@ -1,0 +1,3 @@
+RewriteEngine On
+RewriteCond %{HTTP_HOST} ^html5notepad.com
+RewriteRule (.*) http://www.html5notepad.com/$1 [R=301,L]

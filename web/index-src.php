@@ -87,6 +87,8 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
       <br /><br />
       Available at the <a href="https://chrome.google.com/webstore/detail/olhhcobmolooljldnlapkgfnompogplm" target="_">Chrome Web Store</a>
       <br /><br />
+      About the app: <a href="http://www.html5notepad.com/" target="_">www.html5notepad.com</a>
+      <br /><br />
       <b>Problems or suggestions?</b> Report them here: <a href="http://bit.ly/n5support" target="_">http://bit.ly/n5support</a>
       <br /><br />
       Version: <?php echo date('Y-m-d G:i:s', time())?>
