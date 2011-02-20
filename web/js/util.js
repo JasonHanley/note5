@@ -19,6 +19,10 @@ String.prototype.zeroPad = function(num) {
   return ret;
 };
 
+function htmlEntities(str) {
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 // Get a date in YYYY-MM-DD format
 Date.prototype.get8601Date = function() {
   month = (this.getMonth() + 1).toString().zeroPad();

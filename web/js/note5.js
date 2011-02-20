@@ -142,7 +142,7 @@ var Note5 = {
         savedList += '<button onclick="Note5.cmdRemoveConfirm(\''+name+'\');"><img src="images/icon_recycle.png" class="icon" alt="Delete" title="Delete" /></button>' +
           '<form method="post" action="api/?action=dt" style="display:inline;">' +
           '<input type="hidden" name="fn" value="' + note.name + '">' +
-          '<input type="hidden" name="data" value="' + note.content + '">' +
+          '<input type="hidden" name="data" value="' + htmlEntities(note.content) + '">' +
           '<button type="submit"><img src="images/icon_download.png" class="icon" alt="Download" title="Download" /></button>' +
           '</form>' +
           ' <a href="#'+name+'" onclick="Note5.cmdMakeActive(\''+name+'\');">'+name+'</a> <i>'+content+'</i><br>';
