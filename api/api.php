@@ -19,9 +19,9 @@ if(strpos($ref, $_SERVER['SERVER_NAME']) === false) {
 
 set_exception_handler('exception_handler');
 
-$dbh = new PDO('mysql:host='.DBConfig::$dbhost.';dbname='.DBConfig::$dbname, DBConfig::$dbuser, DBConfig::$dbpass);
+//$dbh = new PDO('mysql:host='.DBConfig::$dbhost.';dbname='.DBConfig::$dbname, DBConfig::$dbuser, DBConfig::$dbpass);
 
-$dbh->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+//$dbh->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
 class Actions {
   public static $Error = -1; 
@@ -42,9 +42,9 @@ if($action == 'log') {
   $params = json_decode($json, true);
   //print_r($params);
   
-  logAction($params['version'], $params['type'], $json);
+  //logAction($params['version'], $params['type'], $json);
   
-  echo '<br /><br />Log success.';
+  //echo '<br /><br />Log success.';
 } elseif($action == 'dt') { // Download .txt
   $filename = $_POST['fn'];
   $data = $_POST['data'];
