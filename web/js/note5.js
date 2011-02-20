@@ -34,8 +34,8 @@ var Note5 = {
     // Resize the note textarea
     $(window).resize(this.onresize);
     this.onresize();
-    $('textarea#note').autoResize({});
-    $('textarea#note').keydown();    
+    //$('textarea#note').autoResize({});
+    //$('textarea#note').keydown();    
     
     // Resize width on device flip (iOS)
     window.onorientationchange=this.onresize;
@@ -116,7 +116,7 @@ var Note5 = {
       }
       
       // Resize note area, if necessary
-      $('textarea#note').keydown;    
+      //$('textarea#note').keydown;    
       
       // Save note content to doc
       this.doc.updateCurrent(noteVal);
@@ -177,7 +177,7 @@ var Note5 = {
       $('#note').val(this.doc.getCurrentNote().content);
       $('#button_home').click();
       this.doc.saveLocal();
-      $('textarea#note').keydown();
+      //$('textarea#note').keydown();
     }
   },
   
@@ -251,8 +251,11 @@ var Note5 = {
   
   // Resize the app window width as necessary
   onresize: function() {
+    var docHeight=window.innerHeight;
     var docWidth=window.innerWidth;
+    var navHeight=$('#nav').height();
     $('#note').css('width', docWidth-44);
+    $('#note').css('height', docHeight-navHeight-40);
   },
   
   errorHandler: function(errMsg, errUrl, errLine) {
