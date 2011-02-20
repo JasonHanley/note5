@@ -5,8 +5,17 @@ include 'util.php';
 
 $ref = $_SERVER['HTTP_REFERER'];
 //echo $ref;
-if(strpos($ref, Security::$URL) === false && strpos($ref, 'http://projects') === false)
-  die('Error.');
+
+if(strpos($ref, $_SERVER['SERVER_NAME']) === false) {
+  header("HTTP/1.0 403 Forbidden");
+  echo $ref.'<br>';
+  echo $_SERVER['SERVER_NAME'].'<br>';
+  echo $_SERVER['HTTP_HOST'].'<br>';
+  die('403 Forbidden');
+}
+
+//if(strpos($ref, Security::$URL) === false && strpos($ref, 'http://projects') === false)
+//  die('Error.');
 
 set_exception_handler('exception_handler');
 
@@ -36,8 +45,14 @@ if($action == 'log') {
   logAction($params['version'], $params['type'], $json);
   
   echo '<br /><br />Log success.';
-}
-else {
+} elseif($action == 'dt') { // Download .txt
+  $filename = $_POST['fn'];
+  $data = $_POST['data'];
+  header('Content-type: text/csv');
+  header('Content-Disposition: attachment; filename="'.$filename.'.txt"');
+  echo $data;
+  
+} else {
   echo 'Undefined action.';
 }
 

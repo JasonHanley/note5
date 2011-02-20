@@ -7,7 +7,7 @@ var Note5Doc = function() {
 
 // Note5 Application static class
 var Note5 = {
-  updateTime: 500,
+  updateTime: 800,
   localStorageKey: 'Note5.notes',
   init: function() {
     //window.onerror = this.errorHandler; *** Completely disable error handling until we can figure out how to make it work offline
@@ -22,7 +22,7 @@ var Note5 = {
     // If there are no notes, create one
     if(this.doc.notes.length < 1) {
       this.cmdNew();
-      $('#note').html('Just start typing. Your changes will be auto-saved.');
+      $('#note').html('Just start typing. Changes will be auto-saved. Note area will auto-expand.');
       $('#note').focus();
       $('#note').select();
     }
@@ -31,10 +31,14 @@ var Note5 = {
       this.view.refreshNote();
     }
     
-    // Resize the app window
+    // Resize the note textarea
     $(window).resize(this.onresize);
     this.onresize();
-    window.onorientationchange=this.onresize; // for iOS
+    $('textarea#note').autoResize({});
+    $('textarea#note').keydown();    
+    
+    // Resize width on device flip (iOS)
+    window.onorientationchange=this.onresize;
     
     //CacheHelper.setStatusDiv('#offlineStatus'); 
   },
@@ -112,7 +116,7 @@ var Note5 = {
       }
       
       // Resize note area, if necessary
-      //$('#note').get(0).resize();
+      $('textarea#note').keydown;    
       
       // Save note content to doc
       this.doc.updateCurrent(noteVal);
@@ -135,8 +139,13 @@ var Note5 = {
         name = note.name;
         if(content.length > 24)
           content = content.substr(0, 24) + '...';
-        savedList += '<li><button onclick="Note5.cmdRemoveConfirm(\''+name+'\');"><img src="images/icon_recycle.png" style="width:1.5em; height:1.5em;" alt="Delete" title="Delete" /></button>' + 
-          ' <a href="#'+name+'" onclick="Note5.cmdMakeActive(\''+name+'\');">'+name+'</a> <i>'+content+'</i></li>';
+        savedList += '<button onclick="Note5.cmdRemoveConfirm(\''+name+'\');"><img src="images/icon_recycle.png" class="icon" alt="Delete" title="Delete" /></button>' +
+          '<form method="post" action="api/?action=dt" style="display:inline;">' +
+          '<input type="hidden" name="fn" value="' + note.name + '">' +
+          '<input type="hidden" name="data" value="' + note.content + '">' +
+          '<button type="submit"><img src="images/icon_download.png" class="icon" alt="Download" title="Download" /></button>' +
+          '</form>' +
+          ' <a href="#'+name+'" onclick="Note5.cmdMakeActive(\''+name+'\');">'+name+'</a> <i>'+content+'</i><br>';
       }
       savedList += '</ul>'+"\n";
       $('#saved_docs').html(savedList);
@@ -168,6 +177,7 @@ var Note5 = {
       $('#note').val(this.doc.getCurrentNote().content);
       $('#button_home').click();
       this.doc.saveLocal();
+      $('textarea#note').keydown();
     }
   },
   
@@ -215,19 +225,19 @@ var Note5 = {
   // Utility functions
   setupButtonHandlers: function() {
     $('#button_home').click( function() {
-      $('#main').show('fast');
-      $('#saved').hide('fast');
-      $('#config').hide('fast');
+      $('#main').show();
+      $('#saved').hide();
+      $('#config').hide();
     });
     $('#button_saved').click( function() {
-      $('#main').hide('fast');
-      $('#saved').show('fast');
-      $('#config').hide('fast');
+      $('#main').hide();
+      $('#saved').show();
+      $('#config').hide();
     });
     $('#button_config').click( function() {
-      $('#main').hide('fast');
-      $('#saved').hide('fast');
-      $('#config').show('fast');
+      $('#main').hide();
+      $('#saved').hide();
+      $('#config').show();
     });
     $('#button_new').click( function() {
       Note5.cmdNew();
@@ -239,13 +249,10 @@ var Note5 = {
     $('#saved_message').html('Application has been reset: '+(new Date()).get8601Time());
   },
   
-  //Resize the app window as necessary
+  // Resize the app window width as necessary
   onresize: function() {
-    var docHeight=window.innerHeight;
     var docWidth=window.innerWidth;
-    var navHeight=$('#nav').height();
-    $('#note').css('width', docWidth-40);
-    $('#note').css('height', docHeight-navHeight-40);
+    $('#note').css('width', docWidth-44);
   },
   
   errorHandler: function(errMsg, errUrl, errLine) {

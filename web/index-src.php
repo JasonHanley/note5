@@ -57,7 +57,7 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
         <ul>
           <li><a id="button_home" href="#" class="awesome icon"><img src="images/gnome_home.png" class="icon" alt="Home" title="Home" /></a></li>
           <li><a id="button_new" href="#" class="awesome icon"><img src="images/gnome_new.png" class="icon" alt="New" title="New" /></a></li>
-          <li><a id="button_saved" href="#" class="awesome icon"><img src="images/gnome_open.png" class="icon" alt="Saved" title="Saved" /><span id="num_saved"></span></a></li>
+          <li><a id="button_saved" href="#" class="awesome icon"><img src="images/gnome_open.png" class="icon" style="z-index:1; position:relative; " alt="Saved" title="Saved" /><span id="num_saved" style="position: absolute; z-index:2; right:.2em; bottom:.1em;"></span></a></li>
           <li><a id="button_config" href="#" class="awesome icon"><img src="images/gnome_system.png" class="icon" alt="Config" title="Config" /></a></li>
         </ul>
 			</nav>
@@ -83,11 +83,9 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
       <br /><br />
       Very simple. Just start typing. Everything is saved to your system automatically.
       <br /><br />
-      By: <a href="http://www.jasonhanley.com/" target="_">Jason M. Hanley</a>
+      About the app: <a href="http://www.html5notepad.com/" target="_">www.html5notepad.com</a>
       <br /><br />
       Available at the <a href="https://chrome.google.com/webstore/detail/olhhcobmolooljldnlapkgfnompogplm" target="_">Chrome Web Store</a>
-      <br /><br />
-      About the app: <a href="http://www.html5notepad.com/" target="_">www.html5notepad.com</a>
       <br /><br />
       <b>Problems or suggestions?</b> Report them here: <a href="http://bit.ly/n5support" target="_">http://bit.ly/n5support</a>
       <br /><br />
@@ -123,6 +121,7 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
   <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.min.js"></script>
   <script src="<?php autoVer('js/libs/json2-min.js')?>"></script>
   <script src="<?php autoVer('js/libs/localstorage.js')?>"></script>
+  <script src="<?php autoVer('js/libs/autoresize.jquery.js')?>"></script>
   <script src="<?php autoVer('js/util.js')?>"></script>
   <script src="<?php autoVer('js/note5.js')?>"></script>
   <script>

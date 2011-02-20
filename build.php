@@ -45,6 +45,7 @@ addFiles($files, 'js/*.js', true);
 addFiles($files, 'js/libs/json2-min.js', true);
 addFiles($files, 'js/libs/localstorage.js', true);
 addFiles($files, 'js/libs/modernizr-1.6.min.js');
+addFiles($files, 'js/libs/autoresize.jquery.js');
 addFiles($files, 'images/*');
 addFiles($files, 'css/smoothness/images/*');
 array_push($files, 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js');

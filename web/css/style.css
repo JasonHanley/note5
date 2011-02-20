@@ -115,11 +115,14 @@ h2 {
   font-size: 16pt;
   background: #ffc;
   padding: .3em;
+  height: 10em;
   width: 98%;
   -moz-border-radius: 5px; 
   -webkit-border-radius: 5px;
+  border-radius: 5px;
   -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
   -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.5);
 }
 
 #saved {
@@ -151,6 +154,13 @@ h2 {
   position: relative;
   cursor: pointer;
 }
+
+span#num_saved {
+  color: #fff;
+  font-size: 17pt;
+  text-outline: 1px 1px #000; 
+  text-shadow: rgba(0,0,0,0.9) -1px -1px 4px;
+}
  
 .awesome:hover              { background-color: #556; color: #fff; }
 .awesome:active             { top: 1px; }
@@ -161,7 +171,6 @@ h2 {
 .huge.awesome, .huge.awesome:visited      { font-size: 14pt; padding: 0.5em; }
 .icon.awesome, .icon.awesome:visited      { font-size: 14pt; padding: 0.25em; }
 img.icon { width: 2em; height: 2em; }
-
 
 @media all and (orientation:portrait) { 
   
