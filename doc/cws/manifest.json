@@ -1,7 +1,7 @@
 {
   "name": "note5: An HTML5 Notepad",
   "description": "Jot down notes quickly and easily",
-  "version": "0.2.0.0",
+  "version": "0.3.0.0",
   "app": {
     "urls": [
       "http://note5.jasonhanley.com/"
