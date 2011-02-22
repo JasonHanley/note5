@@ -126,7 +126,7 @@ h2 {
 }
 
 #saved {
-  font-size: 12pt;
+  font-size: 13pt;
 }
 
 #saved button {
@@ -170,7 +170,53 @@ span#num_saved {
 .large.awesome, .large.awesome:visited      { font-size: 14px; padding: 8px 14px 9px; }
 .huge.awesome, .huge.awesome:visited      { font-size: 14pt; padding: 0.5em; }
 .icon.awesome, .icon.awesome:visited      { font-size: 14pt; padding: 0.25em; }
+
 img.icon { width: 2em; height: 2em; }
+button.icon { width: 2.75em; height: 2.75em; text-align: center; vertical-align: middle; }
+
+table.fileList {
+  background-color: #fff;
+  border-collapse: separate;
+  border-spacing: 2px;  
+}
+
+table.fileList tr td {
+  background-color: #eee;
+  padding: 0.25em;
+  vertical-align: middle;
+  background-color: rgb(206,214,235);
+  background-image: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(0, rgb(250,250,250)),
+    color-stop(1, rgb(206,214,235))
+  );
+  background-image: -moz-linear-gradient(
+    center bottom,
+    rgb(250,250,250) 0%,
+    rgb(206,214,235) 100%
+  );
+  -moz-border-radius: 3px; 
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+}
+
+table.fileList tr.active td {
+  background-color: rgb(255,255,138);
+  background-image: -webkit-gradient(
+      linear,
+      left bottom,
+      left top,
+      color-stop(0, rgb(250,250,250)),
+      color-stop(1, rgb(255,255,138))
+  );
+  background-image: -moz-linear-gradient(
+      center bottom,
+      rgb(250,250,250) 0%,
+      rgb(255,255,138) 100%
+  );
+}
 
 @media all and (orientation:portrait) { 
   

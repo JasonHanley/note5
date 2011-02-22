@@ -126,30 +126,37 @@ var Note5 = {
       // Update list of saved documents
       this.refreshSavedArea();
 
+      //date = new Date();
+      //console.log('refreshPage '+date.get8601Date() + '.' + date.get8601Time());
+
       setTimeout('Note5.view.refreshPage()', Note5.updateTime);
       this.updateRunning = false;
     },
     
     // Refresh the 'Saved' tab
     refreshSavedArea: function() {
-      var savedList = '<ul>';
+      var savedList = '<table class="fileList">';
       
       // List documents in "most recently created first" order
       for(var i = (this.doc.notes.length-1); i >= 0; i--) {
-        note = this.doc.notes[i];
-        content = note.content;
-        name = note.name;
+        var note = this.doc.notes[i];
+        var content = note.content;
+        var name = note.name;
+        var activeTxt = '';
+        if(this.doc.currentNoteIndex == i)
+          activeTxt = ' active';
         if(content.length > 24)
           content = content.substr(0, 24) + '...';
-        savedList += '<button onclick="Note5.cmdRemoveConfirm(\''+name+'\');"><img src="images/icon_recycle.png" class="icon" alt="Delete" title="Delete" /></button>' +
-          '<form method="post" action="api/?action=dt" style="display:inline;">' +
+        savedList += '<tr class="'+activeTxt+'"><td><button onclick="Note5.cmdRemoveConfirm(\''+name+'\');"  class="icon">' +
+          '<img src="images/icon_recycle.png" class="icon" alt="Delete" title="Delete" /></button></td>' +
+          '<td><form method="post" action="api/?action=dt" style="display:inline;">' +
           '<input type="hidden" name="fn" value="' + note.name + '">' +
           '<input type="hidden" name="data" value="' + htmlEntities(note.content) + '">' +
-          '<button type="submit"><img src="images/icon_download.png" class="icon" alt="Download" title="Download" /></button>' +
-          '</form>' +
-          ' <a href="#'+name+'" onclick="Note5.cmdMakeActive(\''+name+'\');">'+name+'</a> <i>'+content+'</i><br>';
+          '<button type="submit" class="icon"><img src="images/icon_download.png" class="icon" alt="Download" title="Download" /></button>' +
+          '</form></td>' +
+          '<td><b><a href="#'+name+'" onclick="Note5.cmdMakeActive(\''+name+'\');">'+name+'</a></b> <i>'+content+'</i></td>';
       }
-      savedList += '</ul>'+"\n";
+      savedList += '</table>'+"\n";
       $('#saved_docs').html(savedList);
       
       // Update 'Saved' icon with # of documents
@@ -181,6 +188,7 @@ var Note5 = {
       this.doc.setIndex(index);
       this.doc.saveLocal();
       $('#button_home').click();
+      this.view.refreshSavedArea();
       this.view.refreshNote();
       $('#note').focus();
     }
