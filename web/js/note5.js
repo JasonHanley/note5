@@ -133,7 +133,9 @@ var Note5 = {
     // Refresh the 'Saved' tab
     refreshSavedArea: function() {
       var savedList = '<ul>';
-      for(var i = 0; i < this.doc.notes.length; i++) {
+      
+      // List documents in "most recently created first" order
+      for(var i = (this.doc.notes.length-1); i >= 0; i--) {
         note = this.doc.notes[i];
         content = note.content;
         name = note.name;
