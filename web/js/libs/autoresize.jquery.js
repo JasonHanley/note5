@@ -16,7 +16,7 @@
             animateDuration : 150,
             animateCallback : function(){},
             extraSpace : 35,
-            limit: 1000,
+            limit: 10000,
             minHeight: 200
         }, options);
         

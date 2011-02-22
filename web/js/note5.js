@@ -19,10 +19,17 @@ var Note5 = {
     // Load notes from local storage
     this.doc.loadLocal();
     
+    // Resize the note textarea
+    $(window).resize(this.onresize);
+    this.onresize();
+    
+    // Set up auto resize handler
+    $('textarea#note').autoResize({});
+    
     // If there are no notes, create one
     if(this.doc.notes.length < 1) {
       this.cmdNew();
-      $('#note').html('Just start typing. Changes will be auto-saved. Note area will auto-expand.');
+      this.doc.updateCurrent('Just start typing. Changes will be auto-saved. Note area will auto-expand.');
       $('#note').focus();
       $('#note').select();
     }
@@ -30,12 +37,6 @@ var Note5 = {
       this.view.refreshSavedArea();
       this.view.refreshNote();
     }
-    
-    // Resize the note textarea
-    $(window).resize(this.onresize);
-    this.onresize();
-    //$('textarea#note').autoResize({});
-    //$('textarea#note').keydown();    
     
     // Resize width on device flip (iOS)
     window.onorientationchange=this.onresize;
@@ -57,6 +58,7 @@ var Note5 = {
     },
     updateCurrent: function(content) { 
       this.notes[this.currentNoteIndex].content = content;
+      this.view.refreshNote();
     },
     
     findIndexByName: function(name) {
@@ -115,15 +117,13 @@ var Note5 = {
         return;
       }
       
-      // Resize note area, if necessary
-      //$('textarea#note').keydown;    
-      
       // Save note content to doc
       this.doc.updateCurrent(noteVal);
       
       // Save all notes locally
       this.doc.saveLocal();
 
+      // Update list of saved documents
       this.refreshSavedArea();
 
       setTimeout('Note5.view.refreshPage()', Note5.updateTime);
@@ -149,13 +149,16 @@ var Note5 = {
       }
       savedList += '</ul>'+"\n";
       $('#saved_docs').html(savedList);
+      
+      // Update 'Saved' icon with # of documents
       var numDocs = this.doc.notes.length;
       if(numDocs == 0) numDocs = '';
       $('#num_saved').html(numDocs);
     },
     
     refreshNote: function() {
-      $('#note').html(this.doc.getCurrentNote().content);
+      $('#note').val(this.doc.getCurrentNote().content);
+      $('#note').keydown(); // resize textarea    
     }
   },
   
@@ -163,7 +166,7 @@ var Note5 = {
   cmdNew: function() {
     var newDoc = new Note5Doc();
     this.doc.setIndex(this.doc.add(newDoc)-1);
-    $('#note').val(this.doc.getCurrentNote().content);
+    this.view.refreshNote();
     this.view.refreshPage(true);
     $('#button_home').click();
     $('#note').focus();
@@ -174,10 +177,10 @@ var Note5 = {
     var index = this.doc.findIndexByName(name);
     if(index >= 0 ) {
       this.doc.setIndex(index);
-      $('#note').val(this.doc.getCurrentNote().content);
-      $('#button_home').click();
       this.doc.saveLocal();
-      //$('textarea#note').keydown();
+      $('#button_home').click();
+      this.view.refreshNote();
+      $('#note').focus();
     }
   },
   
@@ -208,24 +211,22 @@ var Note5 = {
     oldIndex = this.doc.findIndexByName(oldName);
     if(oldIndex >= 0) {
       this.doc.setIndex(oldIndex);
-      this.doc.saveLocal();
-      $('#note').val(this.doc.getCurrentNote().content);
     } else if(this.doc.notes.length) {
       this.doc.setIndex(0);
-      this.doc.saveLocal();
-      $('#note').val(this.doc.getCurrentNote().content);
     } else {
       this.doc.setIndex(-1);
-      this.doc.saveLocal();
       this.cmdNew();
     }
+    this.doc.saveLocal();
     this.view.refreshSavedArea();
+    this.view.refreshNote();
   },
   
   // Utility functions
   setupButtonHandlers: function() {
     $('#button_home').click( function() {
       $('#main').show();
+      $('#note').keydown(); // resize textarea    
       $('#saved').hide();
       $('#config').hide();
     });
@@ -242,7 +243,8 @@ var Note5 = {
     $('#button_new').click( function() {
       Note5.cmdNew();
     })
-  },  
+  },
+  
   resetApplication: function() {
     // Reset localstorage
     localStorage.removeItem(Note5.localStorageKey);
@@ -251,11 +253,14 @@ var Note5 = {
   
   // Resize the app window width as necessary
   onresize: function() {
-    var docHeight=window.innerHeight;
+    // Width
     var docWidth=window.innerWidth;
-    var navHeight=$('#nav').height();
     $('#note').css('width', docWidth-44);
-    $('#note').css('height', docHeight-navHeight-40);
+    
+    // Height
+    //var docHeight=window.innerHeight;
+    //var navHeight=$('#nav').height();
+    //$('#note').css('height', docHeight-navHeight-40);
   },
   
   errorHandler: function(errMsg, errUrl, errLine) {
