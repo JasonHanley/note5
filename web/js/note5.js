@@ -13,7 +13,6 @@ var Note5 = {
     //window.onerror = this.errorHandler; *** Completely disable error handling until we can figure out how to make it work offline
     this.doc.view = this.view;
     this.view.doc = this.doc;
-    this.setupButtonHandlers();
     setTimeout('Note5.view.refreshPage()', Note5.updateTime);
 
     // Load notes from local storage
@@ -40,6 +39,9 @@ var Note5 = {
     
     // Resize width on device flip (iOS)
     window.onorientationchange=this.onresize;
+    
+    // Attach main button handlers
+    this.setupButtonHandlers();
     
     //CacheHelper.setStatusDiv('#offlineStatus'); 
   },
