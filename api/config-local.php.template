@@ -1,12 +1,12 @@
 <?php
 
-class DBConfig {
-  public static $dbhost = '';
+class DBConfig { // Database configuration
+  public static $dbhost = 'localhost';
   public static $dbname = '';
   public static $dbuser = '';
   public static $dbpass = '';
 };
 
-class Security {
-  public static $URL = 'http://localhost'; 
+class WSConfig { // Web server configuration
+    public static $url = 'http://note5.jasonhanley.com/';
 };

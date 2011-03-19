@@ -19,8 +19,17 @@ String.prototype.zeroPad = function(num) {
   return ret;
 };
 
+// Make a string URL-safe
 function htmlEntities(str) {
   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// Generate a pseudo-GUID -- http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
+function guidGenerator() {
+    var S4 = function() {
+       return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+    };
+    return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
 }
 
 // Get a date in YYYY-MM-DD format
