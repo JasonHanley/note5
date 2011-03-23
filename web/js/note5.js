@@ -3,6 +3,7 @@ var Note5Doc = function() {
     date = new Date();
     this.name = date.get8601Date() + '.' + date.get8601Time();
     this.content = '';
+    this.docId = guidGenerator(); 
 };
 
 //Note5 Application static class
@@ -16,10 +17,23 @@ var Note5 = {
         this.doc.view = this.view;
         this.view.doc = this.doc;
         
+        // Generate or load application unique identifier
         this.getInstanceId();
     
-        // Load notes from local storage
-        this.doc.loadLocal();
+        if(window.localStorage) {
+            // Load notes from local storage
+            this.doc.loadLocal();
+        } else {
+            $('#main').html('<b style="color:red">Error:</b> Sorry, your browser does not support saving notes locally. Please upgrade :(');
+            $('#login').html('');
+            return;
+        }
+        
+        // Check to see if we're logged in
+        $.get('api/?action=checklogin&instanceId='+Note5.instanceId, function(data) {Note5.setCurrentEmail(data);}, 'html'); 
+        
+        // TODO: Check for new documents
+        
     
         // Resize the note textarea
         $(window).resize(this.onresize);
@@ -32,6 +46,7 @@ var Note5 = {
         if(this.doc.notes.length < 1) {
             this.cmdNew();
             this.doc.updateCurrent('Just start typing. Changes will be auto-saved. Note area will auto-expand.');
+            this.doc.saveCurrent();
             $('#note').focus();
             $('#note').select();
         }
@@ -48,10 +63,9 @@ var Note5 = {
         // Attach main button handlers
         this.setupButtonHandlers();
         
-        $.get('api/?action=checklogin&instanceId='+Note5.instanceId, function(data) { 
-            Note5.currentEmail = data;
-            if(Note5.currentEmail) { $('#login').html(Note5.currentEmail+'<br><a href="api/?action=logout&instanceId='+Note5.instanceId+'">Sign out</a>'); }
-            }, 'html' );
+        // Indicate that initialization is complete
+        $('#note').css('background', '#ffc');
+        $('#note').removeAttr('disabled');
     
         //CacheHelper.setStatusDiv('#offlineStatus'); 
     },
@@ -60,6 +74,7 @@ var Note5 = {
     doc: {
         view: null,
         notes: [],
+        docIds: [],
         currentNoteIndex: -1,
         setIndex: function(i) { this.currentNoteIndex = i; },
         add: function(doc) { return this.notes.push(doc); },
@@ -80,34 +95,91 @@ var Note5 = {
             }
             return -1;
         },
+        
+        findIndexById: function(docId) {
+            for(var i = 0; i < this.notes.length; i++) {
+                if(this.notes[i].docId == docId)
+                    return i;
+            }
+            return -1;
+        },
     
         // Save to local storage (requires HTML5 support)
         saveLocal: function() {
-            currentNoteName = ''; 
+            // Old routine
+            /*currentNoteName = ''; 
             if(this.currentNoteIndex >= 0)
                 currentNoteName = this.notes[this.currentNoteIndex].name;
             data = { notes: this.notes, currentNoteName: currentNoteName };
             json = JSON.stringify(data);
-            if(window.localStorage) {
-                window.localStorage.setItem(Note5.localStorageKey, json);
-            } else {
-                $('#saved_message').html('<b style="color:red">Warning:</b> Old browser. Your changes will not be saved when you reload :(');
+            window.localStorage.setItem(Note5.localStorageKey, json);
+            */
+            // New routine
+            for(i = 0; i < this.docIds.length; i++) {
+                json = JSON.stringify(this.notes[i]);
+                window.localStorage.setItem(this.notes[i].docId, json);
             }
+            json = JSON.stringify(this.docIds);
+            window.localStorage.setItem('Note5.docIds', json);
+            window.localStorage.setItem('Note5.currentDocId', this.notes[this.currentNoteIndex].docId);
+        },
+        
+        // Save current document to local storage
+        saveCurrent: function() {
+            currentNote = this.getCurrentNote();
+            json = JSON.stringify(currentNote);
+            window.localStorage.setItem(currentNote['docId'], json);
         },
     
         // Load from local storage (requires HTML5 support)
         loadLocal: function() {
-            if(window.localStorage) {
-                json = window.localStorage.getItem(Note5.localStorageKey);
-                if(json) {
-                    data = JSON.parse(json);
-                    if(data) {
-                        this.notes = data.notes;
-                        currentNoteName = data.currentNoteName;
-                        this.currentNoteIndex = this.findIndexByName(currentNoteName);
+            // Old routine
+            json = window.localStorage.getItem(Note5.localStorageKey);
+            if(json) {
+                data = JSON.parse(json);
+                if(data) {
+                    this.notes = data.notes;
+                    currentNoteName = data.currentNoteName;
+                    this.currentNoteIndex = this.findIndexByName(currentNoteName);
+                    
+                    // Update docIs list
+                    for(i = 0; i < this.notes.length; i++) {
+                        if(!this.notes[i].docId)
+                            this.notes[i].docId = guidGenerator(); // Set id if not already set
+                        docId = this.notes[i].docId
+                        this.docIds.push(docId);
                     }
                 }
-            }      
+                
+                // Save to new format
+                this.saveLocal();
+                
+                // Delete old format
+                window.localStorage.removeItem(Note5.localStorageKey);
+                this.notes = [];
+                this.currentNoteIndex = -1;
+                this.docIds = [];
+            }
+            
+            // New routine
+            json = window.localStorage.getItem('Note5.docIds');
+            if(json) {
+                data = JSON.parse(json);
+                if(data) {
+                    this.docIds = data;
+                    for(i = 0; i < data.length; i++) {
+                        json = window.localStorage.getItem(data[i]);
+                        if(json) {
+                            note = JSON.parse(json);
+                            if(note) {
+                                this.notes.push(note);
+                            }
+                        }
+                    }
+                }
+            }
+            var currentDocId = window.localStorage.getItem('Note5.currentDocId');
+            this.currentNoteIndex = this.findIndexById(currentDocId);
         }
     },
     
@@ -118,69 +190,70 @@ var Note5 = {
     
         // Refresh everything that needs to be updated every updateTime milliseconds
         refreshPage: function(force) {
-        if(this.updateRunning) return;
-        this.updateRunning = true;
-    
-        // If text hasn't changed since last update, return
-        var noteVal = $('#note').val();
-        if(!force && noteVal == this.doc.getCurrentNote().content) {
+            if(this.updateRunning) return;
+            this.updateRunning = true;
+        
+            // If text hasn't changed since last update, return
+            var noteVal = $('#note').val();
+            if(!force && noteVal == this.doc.getCurrentNote().content) {
+                setTimeout('Note5.view.refreshPage()', Note5.updateTime);
+                this.updateRunning = false;
+                return;
+            }
+        
+            // Save note content to doc
+            this.doc.updateCurrent(noteVal);
+            this.doc.saveCurrent();
+        
+            // Save all notes locally
+            this.doc.saveLocal();
+        
+            // Update list of saved documents
+            this.refreshSavedArea();
+        
+            //date = new Date();
+            //console.log('refreshPage '+date.get8601Date() + '.' + date.get8601Time());
+        
             setTimeout('Note5.view.refreshPage()', Note5.updateTime);
             this.updateRunning = false;
-            return;
+        },
+    
+        //Refresh the 'Saved' tab
+        refreshSavedArea: function() {
+            var savedList = '<table class="fileList">';
+            
+            // List documents in "most recently created first" order
+            for(var i = (this.doc.notes.length-1); i >= 0; i--) {
+                var note = this.doc.notes[i];
+                var content = note.content;
+                var name = note.name;
+                var activeTxt = '';
+                if(this.doc.currentNoteIndex == i)
+                    activeTxt = ' active';
+                if(content.length > 24)
+                    content = content.substr(0, 24) + '...';
+                savedList += '<tr class="'+activeTxt+'"><td><button onclick="Note5.cmdRemoveConfirm(\''+name+'\');"  class="icon">' +
+                '<img src="images/icon_recycle.png" class="icon" alt="Delete" title="Delete" /></button></td>' +
+                '<td><form method="post" action="api/?action=dt" style="display:inline;">' +
+                '<input type="hidden" name="fn" value="' + note.name + '">' +
+                '<input type="hidden" name="data" value="' + htmlEntities(note.content) + '">' +
+                '<button type="submit" class="icon"><img src="images/icon_download.png" class="icon" alt="Download" title="Download" /></button>' +
+                '</form></td>' +
+                '<td><b><a href="#'+name+'" onclick="Note5.cmdMakeActive(\''+name+'\');">'+name+'</a></b> <i>'+content+'</i></td>';
+            }
+            savedList += '</table>'+"\n";
+            $('#saved_docs').html(savedList);
+        
+            // Update 'Saved' icon with # of documents
+            var numDocs = this.doc.notes.length;
+            if(numDocs == 0) numDocs = '';
+            $('#num_saved').html(numDocs);
+        },
+        
+        refreshNote: function() {
+            $('#note').val(this.doc.getCurrentNote().content);
+            $('#note').keydown(); // resize textarea    
         }
-    
-        // Save note content to doc
-        this.doc.updateCurrent(noteVal);
-    
-        // Save all notes locally
-        this.doc.saveLocal();
-    
-        // Update list of saved documents
-        this.refreshSavedArea();
-    
-        //date = new Date();
-        //console.log('refreshPage '+date.get8601Date() + '.' + date.get8601Time());
-    
-        setTimeout('Note5.view.refreshPage()', Note5.updateTime);
-        this.updateRunning = false;
-    },
-    
-    //Refresh the 'Saved' tab
-    refreshSavedArea: function() {
-        var savedList = '<table class="fileList">';
-    
-        // List documents in "most recently created first" order
-        for(var i = (this.doc.notes.length-1); i >= 0; i--) {
-            var note = this.doc.notes[i];
-            var content = note.content;
-            var name = note.name;
-            var activeTxt = '';
-            if(this.doc.currentNoteIndex == i)
-                activeTxt = ' active';
-            if(content.length > 24)
-                content = content.substr(0, 24) + '...';
-            savedList += '<tr class="'+activeTxt+'"><td><button onclick="Note5.cmdRemoveConfirm(\''+name+'\');"  class="icon">' +
-            '<img src="images/icon_recycle.png" class="icon" alt="Delete" title="Delete" /></button></td>' +
-            '<td><form method="post" action="api/?action=dt" style="display:inline;">' +
-            '<input type="hidden" name="fn" value="' + note.name + '">' +
-            '<input type="hidden" name="data" value="' + htmlEntities(note.content) + '">' +
-            '<button type="submit" class="icon"><img src="images/icon_download.png" class="icon" alt="Download" title="Download" /></button>' +
-            '</form></td>' +
-            '<td><b><a href="#'+name+'" onclick="Note5.cmdMakeActive(\''+name+'\');">'+name+'</a></b> <i>'+content+'</i></td>';
-        }
-        savedList += '</table>'+"\n";
-        $('#saved_docs').html(savedList);
-    
-        // Update 'Saved' icon with # of documents
-        var numDocs = this.doc.notes.length;
-        if(numDocs == 0) numDocs = '';
-        $('#num_saved').html(numDocs);
-    },
-    
-    refreshNote: function() {
-        $('#note').val(this.doc.getCurrentNote().content);
-        $('#note').keydown(); // resize textarea    
-    }
     },
     
     //Command: Create a new note
@@ -337,6 +410,14 @@ var Note5 = {
             
             $('#login').html('<a href="api/?action=glogin&instanceId='+this.instanceId+'">Sign in</a>');            
         }        
+    },
+    
+    setCurrentEmail: function(email) { 
+        Note5.currentEmail = email;
+        if(Note5.currentEmail) { 
+            $('#login').html(Note5.currentEmail+'<br><a href="api/?action=logout&instanceId='+
+                Note5.instanceId+'">Sign out</a>');
+        }
     },
 
     dummy: null

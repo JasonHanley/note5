@@ -78,7 +78,7 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
     </header>
 
 <div id="main">
-<form><textarea id="note"></textarea></form>
+<form><textarea id="note" disabled="disabled"></textarea></form>
 </div>
 
 <div id="saved" style="display: none">
