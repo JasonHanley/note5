@@ -1,7 +1,7 @@
 //Note5 Document class
 var Note5Doc = function() {
     date = new Date();
-    this.name = date.get8601Date() + '.' + date.get8601Time();
+    this.name = date.get8601Date() + ' ' + date.get8601Time();
     this.content = '';
     this.docId = guidGenerator(); 
 };
@@ -241,8 +241,7 @@ var Note5 = {
                 '<input type="hidden" name="data" value="' + htmlEntities(note.content) + '">' +
                 '<button type="submit" class="icon"><img src="images/icon_download.png" class="icon" alt="Download" title="Download" /></button>' +
                 '</form></td>' +*/
-                '<td onclick="Note5.cmdMakeActive(\''+name+'\');">'+name+'</td>' +
-                '<td onclick="Note5.cmdMakeActive(\''+name+'\');">'+content+'</td></tr>';
+                '<td onclick="Note5.cmdMakeActive(\''+name+'\');"><div style="width:9.5em;display:inline-block;">'+name+'</div> '+content+'</td></tr>';
             }
             savedList += '</table>'+"\n";
             $('#saved_docs').html(savedList);
@@ -263,6 +262,7 @@ var Note5 = {
     cmdNew: function() {
         var newDoc = new Note5Doc();
         this.doc.setIndex(this.doc.add(newDoc)-1);
+        this.doc.docIds.push(newDoc.docId);
         this.view.refreshNote();
         this.view.refreshPage(true);
         this.showNote();
