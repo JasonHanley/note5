@@ -45,15 +45,12 @@ var Note5 = {
         // If there are no notes, create one
         if(this.doc.notes.length < 1) {
             this.cmdNew();
-            this.doc.updateCurrent('Just start typing. Changes will be auto-saved. Note area will auto-expand.');
             this.doc.saveCurrent();
-            $('#note').focus();
-            $('#note').select();
         }
         else {
             this.view.refreshSavedArea();
             this.view.refreshNote();
-        }
+       }
     
         // Resize width on device flip (iOS)
         window.onorientationchange=this.onresize;
@@ -180,6 +177,10 @@ var Note5 = {
             }
             var currentDocId = window.localStorage.getItem('Note5.currentDocId');
             this.currentNoteIndex = this.findIndexById(currentDocId);
+            
+            // If it can't find the correct current note, set it to the last
+            if(this.currentNoteIndex < 0 && this.notes.length > 0)
+                this.currentNoteIndex = (this.notes.length-1);
         }
     },
     
@@ -230,16 +231,18 @@ var Note5 = {
                 var activeTxt = '';
                 if(this.doc.currentNoteIndex == i)
                     activeTxt = ' active';
-                if(content.length > 24)
-                    content = content.substr(0, 24) + '...';
-                savedList += '<tr class="'+activeTxt+'"><td><button onclick="Note5.cmdRemoveConfirm(\''+name+'\');"  class="icon">' +
+                if(content.length > 40)
+                    content = content.substr(0, 40) + '...';
+                savedList += '<tr class="'+activeTxt+'">'+
+                /*'<td><button onclick="Note5.cmdRemoveConfirm(\''+name+'\');"  class="icon">' +
                 '<img src="images/icon_recycle.png" class="icon" alt="Delete" title="Delete" /></button></td>' +
                 '<td><form method="post" action="api/?action=dt" style="display:inline;">' +
                 '<input type="hidden" name="fn" value="' + note.name + '">' +
                 '<input type="hidden" name="data" value="' + htmlEntities(note.content) + '">' +
                 '<button type="submit" class="icon"><img src="images/icon_download.png" class="icon" alt="Download" title="Download" /></button>' +
-                '</form></td>' +
-                '<td><b><a href="#'+name+'" onclick="Note5.cmdMakeActive(\''+name+'\');">'+name+'</a></b> <i>'+content+'</i></td>';
+                '</form></td>' +*/
+                '<td onclick="Note5.cmdMakeActive(\''+name+'\');">'+name+'</td>' +
+                '<td onclick="Note5.cmdMakeActive(\''+name+'\');">'+content+'</td></tr>';
             }
             savedList += '</table>'+"\n";
             $('#saved_docs').html(savedList);
@@ -262,7 +265,7 @@ var Note5 = {
         this.doc.setIndex(this.doc.add(newDoc)-1);
         this.view.refreshNote();
         this.view.refreshPage(true);
-        $('#button_home').click();
+        this.showNote();
         $('#note').focus();
     },
     
@@ -272,7 +275,7 @@ var Note5 = {
         if(index >= 0 ) {
             this.doc.setIndex(index);
             this.doc.saveLocal();
-            $('#button_home').click();
+            this.showNote();
             this.view.refreshSavedArea();
             this.view.refreshNote();
             $('#note').focus();
@@ -317,15 +320,15 @@ var Note5 = {
         this.view.refreshNote();
     },
     
+    showNote: function() {
+        $('#main').show();
+        $('#saved').hide();
+        $('#config').hide();
+    },
+    
     //Utility functions
     setupButtonHandlers: function() {
-        $('#button_home').click( function() {
-            $('#main').show();
-            $('#note').keydown(); // resize textarea    
-            $('#saved').hide();
-            $('#config').hide();
-        });
-        $('#button_saved').click( function() {
+        $('#button_saved,#button_saved2').click( function() {
             $('#main').hide();
             $('#saved').show();
             $('#config').hide();
@@ -348,8 +351,11 @@ var Note5 = {
     
     //Resize the app window width as necessary
     onresize: function() {
+        
+        
         // Width
         var docWidth=window.innerWidth;
+        //var docWidth=$('#main_table').width();
         $('#note').css('width', docWidth-44);
     
         // Height
