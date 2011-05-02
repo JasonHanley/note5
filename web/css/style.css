@@ -122,7 +122,7 @@ input:invalid, textarea:invalid {
 ::selection { background:#FF5E99; color:#fff; text-shadow: none; }
 
 /* j.mp/webkit-tap-highlight-color */
-a:link { -webkit-tap-highlight-color: #FF5E99; }
+a:link { -webkit-tap-highlight-color: #ddd; }
 
 /* Make buttons play nice in IE:
    www.viget.com/inspire/styling-the-button-element-in-internet-explorer/ */
@@ -153,6 +153,8 @@ h2 {
     font-family: consolas, courier new, courier, Lucidatypewriter, monospace;
     font-size: 16pt;
     background: #eee;
+    
+    margin-top: 2px;
     padding: .3em;
     height: 3em;
 

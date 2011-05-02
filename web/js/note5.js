@@ -35,13 +35,6 @@ var Note5 = {
         // TODO: Check for new documents
         
     
-        // Resize the note textarea
-        $(window).resize(this.onresize);
-        this.onresize();
-    
-        // Set up auto resize handler
-        $('textarea#note').autoResize({});
-    
         // If there are no notes, create one
         if(this.doc.notes.length < 1) {
             this.cmdNew();
@@ -55,15 +48,24 @@ var Note5 = {
         // Resize width on device flip (iOS)
         window.onorientationchange=this.onresize;
     
-        setTimeout('Note5.view.refreshPage()', Note5.updateTime);
+        // Resize the note textarea width
+        $(window).resize(this.onresize);
     
+        // Set up auto resize handler
+        $('textarea#note').autoResize({});
+        
+        // Force element width update
+        this.onresize();
+    
+        setTimeout('Note5.view.refreshPage()', Note5.updateTime);
+
         // Attach main button handlers
         this.setupButtonHandlers();
         
         // Indicate that initialization is complete
         $('#note').css('background', '#ffc');
         $('#note').removeAttr('disabled');
-    
+        
         //CacheHelper.setStatusDiv('#offlineStatus'); 
     },
     
@@ -352,11 +354,10 @@ var Note5 = {
     //Resize the app window width as necessary
     onresize: function() {
         
-        
         // Width
         var docWidth=window.innerWidth;
         //var docWidth=$('#main_table').width();
-        $('#note').css('width', docWidth-44);
+        $('#note').css('width', docWidth-24);
     
         // Height
         //var docHeight=window.innerHeight;
