@@ -29,12 +29,6 @@ var Note5 = {
             return;
         }
         
-        // Check to see if we're logged in
-        $.get('api/?action=checklogin&instanceId='+Note5.instanceId, function(data) {Note5.setCurrentEmail(data);}, 'html'); 
-        
-        // TODO: Check for new documents
-        
-    
         // If there are no notes, create one
         if(this.doc.notes.length < 1) {
             this.cmdNew();
@@ -48,12 +42,12 @@ var Note5 = {
         // Resize width on device flip (iOS)
         window.onorientationchange=this.onresize;
     
-        // Resize the note textarea width
-        $(window).resize(this.onresize);
-    
         // Set up auto resize handler
         $('textarea#note').autoResize({});
         
+        // Resize the note textarea width
+        $(window).resize(this.onresize);
+    
         // Force element width update
         this.onresize();
     
@@ -65,6 +59,12 @@ var Note5 = {
         // Indicate that initialization is complete
         $('#note').css('background', '#ffc');
         $('#note').removeAttr('disabled');
+        
+        
+        // Check to see if we're logged in (do this last to minimize loading delay)
+        $.get('api/?action=checklogin&instanceId='+Note5.instanceId, function(data) {Note5.setCurrentEmail(data);}, 'html'); 
+        
+        // TODO: Check for new documents
         
         //CacheHelper.setStatusDiv('#offlineStatus'); 
     },
@@ -356,8 +356,8 @@ var Note5 = {
         
         // Width
         var docWidth=window.innerWidth;
-        //var docWidth=$('#main_table').width();
-        $('#note').css('width', docWidth-24);
+        //var docWidth=$('#note_table').width();
+        $('#note').css('width', docWidth-32);
     
         // Height
         //var docHeight=window.innerHeight;

@@ -69,8 +69,8 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
         <td id="button_saved" class="button-mobile"><img src="images/gnome_home.png" class="icon" alt="Home" title="Home" />Home</td>
     </tr></table>
 
-    <table style="width:100%"><tr><td>
-    <form><textarea id="note" disabled="disabled"></textarea></form>
+    <table id="note_table" style="width:100%"><tr><td style="text-align:center; vertical-align:middle">
+        <form><textarea id="note" disabled="disabled"></textarea></form>
     </td></tr></table>
 </div>
 
@@ -118,12 +118,14 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
     <br />
     Offline status: <span id="offlineStatus"></span> <?php endif ?></div>
 </div>
-    
-    <div id="dialog-confirm-delete" title="Confirm delete"
-        style="display: none;">This item will be permanently deleted.
-    Recovery will not be possible.</div>
-    
-    <div id="dialog-error" title="Error" style="display: none;">We're very
+
+<div id="dialog-confirm-delete" title="Confirm delete"
+    style="display: none;">This item will be permanently deleted.
+    Recovery will not be possible.
+</div>
+
+<div id="dialog-error" title="Error" style="display: none;">
+    We're very
     sorry, but there's been an error. It may be a problem with your browser.<br />
     <br />
     It is being logged right now and will attempt to fix it! Please check
@@ -131,7 +133,9 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
     <br />
     Sorry for the trouble, and thanks for your patience!
     <div id="error-return"></div>
-    <!-- end of #container -->
+</div>
+   
+<!-- end of #container -->
 </div>
 
 <script
