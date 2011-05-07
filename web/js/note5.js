@@ -40,16 +40,13 @@ var Note5 = {
        }
     
         // Resize width on device flip (iOS)
-        window.onorientationchange=this.onresize;
+        //window.onorientationchange=this.onresize;
     
-        // Set up auto resize handler
-        $('textarea#note').autoResize({});
-        
         // Resize the note textarea width
-        $(window).resize(this.onresize);
+        //$(window).resize(this.onresize);
     
         // Force element width update
-        this.onresize();
+        //this.onresize();
     
         setTimeout('Note5.view.refreshPage()', Note5.updateTime);
 
@@ -57,9 +54,11 @@ var Note5 = {
         this.setupButtonHandlers();
         
         // Indicate that initialization is complete
-        $('#note').css('background', '#ffc');
+        //$('#note').css('background', '#ffc');
         $('#note').removeAttr('disabled');
         
+        // Set up vertical auto resize handler
+        $('textarea#note').autoResize({});
         
         // Check to see if we're logged in (do this last to minimize loading delay)
         $.get('api/?action=checklogin&instanceId='+Note5.instanceId, function(data) {Note5.setCurrentEmail(data);}, 'html'); 
@@ -330,10 +329,11 @@ var Note5 = {
     
     //Utility functions
     setupButtonHandlers: function() {
-        $('#button_saved,#button_saved2').click( function() {
+        $('#button_saved').click( function() {
             $('#main').hide();
             $('#saved').show();
             $('#config').hide();
+            $('saved_docs').focus();
         });
         $('#button_config').click( function() {
             $('#main').hide();

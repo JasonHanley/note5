@@ -136,42 +136,48 @@ button {  width: auto; overflow: visible; }
 /* Primary Styles
     Author: 
  */
+ 
+body {
+    background-color: #ffc;
+} 
+ 
 h2 {
     font-size: 12pt;
     margin-bottom: 6pt;
 }
 
 #container {
-    margin: 4px;
+    
 }
 
 #main {
     font-size: 14pt;
 }
 
-#note {
-    font-family: consolas, courier new, courier, Lucidatypewriter, monospace;
-    font-size: 16pt;
-    background: #eee;
-    
-    margin-top: 2px;
-    padding: .5em;
-    height: 5em;
-    width: 97.5%;
+.textareawrapper
+{
+    margin:0px 8px 0px 0px;
+    padding:2px;
+}
 
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+textarea#note {
+    font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace, serif;    
+    width: 100%;
+    padding: 2px;
+    background-color: transparent;
+    border: 0px;
+    margin-bottom: 30px;
+}
+
+textarea#note:focus {
+    outline:none; 
 }
 
 .button-mobile {
     color: black;
     font-size: 14pt;
     height: 2em;
-    border: solid 0.2em #ccc;
+    border: solid 1px #ccc;
     background-image: -webkit-gradient(
         linear,
         left bottom,
@@ -188,7 +194,6 @@ h2 {
     text-align: center;
     vertical-align: middle;
     cursor: pointer;
-
 }
 
 .button-mobile img.icon {
@@ -196,11 +201,6 @@ h2 {
     height: 1.8em;
     margin-right: 0.3em;
     vertical-align: middle;
-}
-
-#login a {
-    color: black;
-    text-decoration: none;
 }
 
 
@@ -224,9 +224,7 @@ button.icon {
 }
 
 table.fileList {
-    background-color: #fff;
-    border-collapse: separate;
-    border-spacing: 2px;
+    border-spacing: 0px;
     width: 100%;
 }
 
@@ -245,7 +243,6 @@ table.fileList tr td {
     
     text-overflow: ellipsis;
     overflow: hidden;
-
 }
 
 
@@ -255,6 +252,12 @@ table.fileList tr.active td {
         250, 250) ), color-stop(1, rgb(255, 255, 138) ) );
     background-image: -moz-linear-gradient(center bottom, rgb(250, 250, 250)
         0%, rgb(255, 255, 138) 100% );
+}
+
+#login {
+    float: right;
+    margin-right: 4px;
+    margin-top: 4px;
 }
 
 @media all and (orientation:portrait) {

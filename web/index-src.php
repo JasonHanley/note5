@@ -64,32 +64,25 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
 
 <div id="container">
 
-<div id="main" style="display: none">
-    <table id="main_table" style="width:100%"><tr>
-        <td id="button_saved" class="button-mobile"><img src="images/gnome_home.png" class="icon" alt="Home" title="Home" />Home</td>
-    </tr></table>
+<table style="width:100%"><tr>
+    <td id="button_saved" class="button-mobile"><img src="images/gnome_home.png" class="icon" alt="Home" title="Home" />Home</td>
+    <td id="button_new" class="button-mobile"><img src="images/gnome_new.png" class="icon" alt="New" title="New" />New</td>
+    <td id="button_config" class="button-mobile"><img src="images/gnome_system.png" class="icon" alt="Config" title="Config" />Config</td>
+</tr></table>
 
-    <table id="note_table" style="width:100%"><tr><td style="text-align:center; vertical-align:middle">
-        <form><textarea id="note" disabled="disabled"></textarea></form>
-    </td></tr></table>
+<div id="main" style="display: none">
+    <div class="textareawrapper">
+        <textarea id="note" disabled="disabled"></textarea>
+    </div>
 </div>
 
 <div id="saved">
-    <table style="width:100%"><tr>
-        <td id="button_new" class="button-mobile"><img src="images/gnome_new.png" class="icon" alt="New" title="New" />New</td>
-        <td id="button_config" class="button-mobile"><img src="images/gnome_system.png" class="icon" alt="Config" title="Config" />Settings</td>
-    </tr></table>
-
     <div id="saved_docs"></div>
     <div id="saved_message"></div>
 </div>
 
 <div id="config" style="display: none">
-    <table style="width:100%"><tr>
-        <td id="button_saved2" class="button-mobile"><img src="images/gnome_home.png" class="icon" alt="Home" title="Home" />Home</td>
-        <td id="login" class="button-mobile">Sign in</td>
-    </tr></table>
-    
+    <div id="login">Sign in</div>
     <div style="padding:0.5em;">
     <h2>About note5: An HTML5 Notepad</h2>
     <span style="float: left;"><img src="apple-touch-icon.png"
