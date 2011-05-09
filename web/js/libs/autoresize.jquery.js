@@ -17,7 +17,7 @@
             animateCallback : function(){},
             extraSpace : 40,
             limit: 10000,
-            minHeight: 200
+            minHeight: 100
         }, options);
         
         // Only textarea's auto-resize:

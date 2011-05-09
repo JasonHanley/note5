@@ -232,25 +232,27 @@ var Note5 = {
                 var activeTxt = '';
                 if(this.doc.currentNoteIndex == i)
                     activeTxt = ' active';
-                if(content.length > 40)
-                    content = content.substr(0, 40) + '...';
+                var maxLength = 32;
+                if(content.length > maxLength)
+                    content = content.substr(0, maxLength) + '...';
                 savedList += '<tr class="'+activeTxt+'">'+
-                /*'<td><button onclick="Note5.cmdRemoveConfirm(\''+name+'\');"  class="icon">' +
+                '<td class="fileName" onclick="Note5.cmdMakeActive(\''+name+'\');"><div style="width:9.5em;display:inline-block;"><b>'+name+'</b></div> '+content+'</td>' +
+                '<td class="button"><button onclick="Note5.cmdRemoveConfirm(\''+name+'\');"  class="icon">' +
                 '<img src="images/icon_recycle.png" class="icon" alt="Delete" title="Delete" /></button></td>' +
-                '<td><form method="post" action="api/?action=dt" style="display:inline;">' +
+                '<td class="button"><form method="post" action="api/?action=dt" style="display:inline;">' +
                 '<input type="hidden" name="fn" value="' + note.name + '">' +
                 '<input type="hidden" name="data" value="' + htmlEntities(note.content) + '">' +
                 '<button type="submit" class="icon"><img src="images/icon_download.png" class="icon" alt="Download" title="Download" /></button>' +
-                '</form></td>' +*/
-                '<td onclick="Note5.cmdMakeActive(\''+name+'\');"><div style="width:9.5em;display:inline-block;">'+name+'</div> '+content+'</td></tr>';
+                '</form></td>' +
+                '</tr>';
             }
             savedList += '</table>'+"\n";
             $('#saved_docs').html(savedList);
         
             // Update 'Saved' icon with # of documents
-            var numDocs = this.doc.notes.length;
-            if(numDocs == 0) numDocs = '';
-            $('#num_saved').html(numDocs);
+            //var numDocs = this.doc.notes.length;
+            //if(numDocs == 0) numDocs = '';
+            //$('#num_saved').html(numDocs);
         },
         
         refreshNote: function() {

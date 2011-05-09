@@ -44,7 +44,7 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
 <!-- Mobile viewport optimization http://goo.gl/b9SaQ -->
 <meta name="HandheldFriendly" content="True">
 <meta name="MobileOptimized" content="320"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black" />
@@ -64,11 +64,11 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
 
 <div id="container">
 
-<table style="width:100%"><tr>
-    <td id="button_saved" class="button-mobile"><img src="images/gnome_home.png" class="icon" alt="Home" title="Home" />Home</td>
-    <td id="button_new" class="button-mobile"><img src="images/gnome_new.png" class="icon" alt="New" title="New" />New</td>
-    <td id="button_config" class="button-mobile"><img src="images/gnome_system.png" class="icon" alt="Config" title="Config" />Config</td>
-</tr></table>
+<table id="menu_bar"><tr><td>
+    <div id="button_saved" class="button-mobile"><img src="images/gnome_home.png" class="icon" alt="Home" title="Home" /><span id="num_saved"></span></div>
+    <div id="button_new" class="button-mobile"><img src="images/gnome_new.png" class="icon" alt="New" title="New" /></div>
+    <div id="button_config" class="button-mobile"><img src="images/gnome_system.png" class="icon" alt="Config" title="Config" /></div>
+</td></tr></table>
 
 <div id="main" style="display: none">
     <div class="textareawrapper">
@@ -109,8 +109,10 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
     <a href="#" onclick="Note5.errorHandler('Msg','Url','Line');">Test Error
     2</a> <br />
     <br />
-    Offline status: <span id="offlineStatus"></span> <?php endif ?></div>
+    Offline status: <span id="offlineStatus"></span> <?php endif ?>
+    </div>
 </div>
+
 
 <div id="dialog-confirm-delete" title="Confirm delete"
     style="display: none;">This item will be permanently deleted.

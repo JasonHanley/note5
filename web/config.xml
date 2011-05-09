@@ -19,12 +19,12 @@
 		<gap:platform name="android" minVersion="2.1" />
 	</gap:platforms>
 
-	<icon src="icon_128.png" gap:role="default" />
+	<icon src="apple-touch-icon.png" gap:role="default" width="128" height="128" />
 
-    <gap:splash src="icon_128.png" />
+    <gap:splash src="apple-touch-icon.png" width="128" height="128" />
 
-	<!-- <feature name="http://api.phonegap.com/1.0/geolocation"/> -->
-	<!-- <feature name="http://api.phonegap.com/1.0/network"/> -->
+	<feature name="http://api.phonegap.com/1.0/geolocation"/>
+	<feature name="http://api.phonegap.com/1.0/network"/>
 
 	<!-- sample preference specification -->
 	<!-- <preference name="autorotate" value="false" readonly="true"/> -->
