@@ -1,7 +1,7 @@
 <?php
-include 'config-global.php';
-include 'config-local.php';
-include 'util.php';
+require 'config-global.php';
+require 'config-local.php';
+require 'util.php';
 
 //set_exception_handler('exception_handler');
 
