@@ -140,7 +140,7 @@ var Note5 = {
                     currentNoteName = data.currentNoteName;
                     this.currentNoteIndex = this.findIndexByName(currentNoteName);
                     
-                    // Update docIs list
+                    // Update docId list
                     for(i = 0; i < this.notes.length; i++) {
                         if(!this.notes[i].docId)
                             this.notes[i].docId = guidGenerator(); // Set id if not already set
@@ -229,21 +229,23 @@ var Note5 = {
                 var note = this.doc.notes[i];
                 var content = note.content;
                 var name = note.name;
+                var docId = note.docId;
                 var activeTxt = '';
                 if(this.doc.currentNoteIndex == i)
                     activeTxt = ' active';
                 var maxLength = 32;
                 if(content.length > maxLength)
                     content = content.substr(0, maxLength) + '...';
-                savedList += '<tr class="'+activeTxt+'">'+
-                '<td class="fileName" onclick="Note5.cmdMakeActive(\''+name+'\');"><div style="width:9.5em;display:inline-block;"><b>'+name+'</b></div> '+content+'</td>' +
-                '<td class="button"><button onclick="Note5.cmdRemoveConfirm(\''+name+'\');"  class="icon">' +
-                '<img src="images/icon_recycle.png" class="icon" alt="Delete" title="Delete" /></button></td>' +
-                '<td class="button"><form method="post" action="api/?action=dt" style="display:inline;">' +
+                savedList += '<tr>' + // class="'+activeTxt+'">'+
+                '<td class="fileName" onclick="Note5.cmdMakeActive(\''+docId+'\');"><div style="width:9.5em;display:inline-block;"><b>'+name+'</b></div> '+content+'</td>' +
+                '<td class="button">'+
+                '<div id="button_saved" class="button-mobile" onclick="Note5.cmdRemoveConfirm(\''+docId+'\');">' +
+                '<img src="images/gnome_delete.png" class="icon" alt="Remove" title="Remove" /></td>' +
+                /*'<td class="button"><form method="post" action="api/?action=dt" style="display:inline;">' +
                 '<input type="hidden" name="fn" value="' + note.name + '">' +
                 '<input type="hidden" name="data" value="' + htmlEntities(note.content) + '">' +
                 '<button type="submit" class="icon"><img src="images/icon_download.png" class="icon" alt="Download" title="Download" /></button>' +
-                '</form></td>' +
+                '</form></td>' +*/
                 '</tr>';
             }
             savedList += '</table>'+"\n";
@@ -273,8 +275,8 @@ var Note5 = {
     },
     
     //Command: Make the selected note active
-    cmdMakeActive: function(name) {
-        var index = this.doc.findIndexByName(name);
+    cmdMakeActive: function(docId) {
+        var index = this.doc.findIndexById(docId);
         if(index >= 0 ) {
             this.doc.setIndex(index);
             this.doc.saveLocal();
@@ -285,31 +287,21 @@ var Note5 = {
         }
     },
     
-    cmdRemoveConfirm: function(name) {
-        $( "#dialog-confirm-delete" ).dialog({
-            resizable: false,
-            //height:'15em',
-            modal: true,
-            buttons: {
-            "Delete": function() {
-            $( this ).dialog( "close" );
-            Note5.cmdRemove(name);
-        },
-        "Cancel": function() {
-            $( this ).dialog( "close" );
-        }
-        }
-        });    
+    cmdRemoveConfirm: function(docId) {
+        if(confirm("This item will be permanently deleted.\n\nPress Ok to confirm.")) {
+            Note5.cmdRemove(docId);
+        }    
     },
     
     //Command: Remove the selected note
-    cmdRemove: function(name) {
-        var oldName = this.doc.getCurrentNote().name;
-        removeIndex = this.doc.findIndexByName(name);
+    cmdRemove: function(docId) {
+        var oldDocId = this.doc.getCurrentNote().docId;
+        removeIndex = this.doc.findIndexById(docId);
         if(removeIndex >= 0) {
             this.doc.notes.splice(removeIndex, 1);
+            this.doc.docIds.splice(removeIndex, 1);
         }
-        oldIndex = this.doc.findIndexByName(oldName);
+        oldIndex = this.doc.findIndexById(oldDocId);
         if(oldIndex >= 0) {
             this.doc.setIndex(oldIndex);
         } else if(this.doc.notes.length) {

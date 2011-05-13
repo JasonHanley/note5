@@ -34,7 +34,7 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-<title>note5: An HTML5 Notepad</title>
+<title>note5</title>
 <meta name="description"
     content="Inspired by the iPad 'Notes' application. Very simple. Just start typing. Everything is saved to your system automatically.">
 <meta name="author" content="Jason M. Hanley">
@@ -49,11 +49,9 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black" />
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="apple-touch-icon-precomposed" href="apple-touch-icon-precomposed.png">
 
 <link rel="stylesheet" href="<?php autoVer('css/style.css')?>">
-<link rel="stylesheet"
-    href="<?php autoVer('css/smoothness/jquery-ui-1.8.9.custom.css')?>">
-<script src="js/libs/modernizr-1.6.min.js"></script>
 
 <!-- Mobile IE allows us to activate ClearType technology for smoothing fonts for easy reading -->
 <meta http-equiv="cleartype" content="on">
@@ -133,13 +131,6 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
 <!-- end of #container -->
 </div>
 
-<script
-    src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
-<script
-    src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.min.js"></script>
-<script src="<?php autoVer('js/libs/json2-min.js') // http://json.org/js.html ?>"></script>
-<script src="<?php autoVer('js/libs/localstorage.js') // https://gist.github.com/350433 ?>"></script>
-<script src="<?php autoVer('js/libs/autoresize.jquery.js') // http://james.padolsey.com/javascript/jquery-plugin-autoresize/ ?>"></script>
 <script src="<?php autoVer('js/util.js')?>"></script>
 <script src="<?php autoVer('js/note5.js')?>"></script>
 <script>
