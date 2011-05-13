@@ -143,8 +143,9 @@ body {
 } 
  
 h2 {
-    font-size: 12pt;
+    font-size: 16pt;
     margin-bottom: 6pt;
+    font-weight: bold;
 }
 
 b {

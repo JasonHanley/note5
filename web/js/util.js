@@ -128,8 +128,8 @@ var CacheHelper = {
     
 };
 
+// *** Minified libraries follow *** (see after for JQuery plugins)
 
-// *** Minified libraries follow ***
 
 (function(A,w){function ma(){if(!c.isReady){try{s.documentElement.doScroll("left")}catch(a){setTimeout(ma,1);return}c.ready()}}function Qa(a,b){b.src?c.ajax({url:b.src,async:false,dataType:"script"}):c.globalEval(b.text||b.textContent||b.innerHTML||"");b.parentNode&&b.parentNode.removeChild(b)}function X(a,b,d,f,e,j){var i=a.length;if(typeof b==="object"){for(var o in b)X(a,o,b[o],f,e,d);return a}if(d!==w){f=!j&&f&&c.isFunction(d);for(o=0;o<i;o++)e(a[o],b,f?d.call(a[o],o,e(a[o],b)):d,j);return a}return i?
 e(a[0],b):w}function J(){return(new Date).getTime()}function Y(){return false}function Z(){return true}function na(a,b,d){d[0].type=a;return c.event.handle.apply(b,d)}function oa(a){var b,d=[],f=[],e=arguments,j,i,o,k,n,r;i=c.data(this,"events");if(!(a.liveFired===this||!i||!i.live||a.button&&a.type==="click")){a.liveFired=this;var u=i.live.slice(0);for(k=0;k<u.length;k++){i=u[k];i.origType.replace(O,"")===a.type?f.push(i.selector):u.splice(k--,1)}j=c(a.target).closest(f,a.currentTarget);n=0;for(r=
@@ -300,3 +300,28 @@ throw new SyntaxError('JSON.parse');};}}());
 (function($){$.fn.autoResize=function(options){var settings=$.extend({onResize:function(){},animate:true,animateDuration:150,animateCallback:function(){},extraSpace:40,limit:10000,minHeight:100},options);this.filter('textarea').each(function(){var textarea=$(this).css({resize:'none','overflow-y':'hidden'}),origHeight=settings.minHeight,clone=(function(){var props=['height','width','lineHeight','textDecoration','letterSpacing','font-family','font-size','padding'],propOb={};$.each(props,function(i,prop){propOb[prop]=textarea.css(prop);});return textarea.clone().removeAttr('id').removeAttr('name').css({position:'absolute',top:0,left:-9999}).css(propOb).attr('tabIndex','-1').insertBefore(textarea);})(),lastScrollTop=null,updateSize=function(){clone.height(0).val($(this).val()).scrollTop(10000);var scrollTop=Math.max(clone.scrollTop(),settings.minHeight)+settings.extraSpace,toChange=$(this).add(clone);if(lastScrollTop===scrollTop){return;}
 lastScrollTop=scrollTop;if(scrollTop>=settings.limit){$(this).css('overflow-y','');return;}
 settings.onResize.call(this);settings.animate&&textarea.css('display')==='block'?toChange.stop().animate({height:scrollTop},settings.animateDuration,settings.animateCallback):toChange.height(scrollTop);};textarea.unbind('.dynSiz').bind('keyup.dynSiz',updateSize).bind('keydown.dynSiz',updateSize).bind('change.dynSiz',updateSize);});return this;};})(jQuery);
+
+//jQuery plugin: PutCursorAtEnd 1.0
+//http://plugins.jquery.com/project/PutCursorAtEnd
+(function($)
+{
+jQuery.fn.putCursorAtEnd = function()
+{
+   return this.each(function()
+   {
+       $(this).focus()
+
+       if (this.setSelectionRange)
+       {
+           var len = $(this).val().length * 2;
+           this.setSelectionRange(len, len);
+       }
+       else
+       {
+           $(this).val($(this).val());
+       }
+       this.scrollTop = 999999;
+   });
+};
+})(jQuery);
+

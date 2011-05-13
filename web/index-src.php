@@ -86,7 +86,7 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
 <div id="config" style="display: none">
     <div id="login">Sign in</div>
     <div style="padding:0.5em;">
-    <h2>About note5: An HTML5 Notepad</h2>
+    <h2 style="margin-top: 1.5em;">note5 | HTML5 Notepad</h2>
     <span style="float: left;"><img src="apple-touch-icon.png"
         style="width: 5em; height: 5em; margin: .5em;" /></span> Inspired by
     the iPad "Notes" application. <br />

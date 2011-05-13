@@ -3,12 +3,13 @@ var Note5Doc = function() {
     date = new Date();
     this.name = date.get8601Date() + ' ' + date.get8601Time();
     this.content = '';
-    this.docId = guidGenerator(); 
+    this.docId = guidGenerator();
+    this.lastWrite = null;
 };
 
 //Note5 Application static class
 var Note5 = {
-    updateTime: 1500,
+    updateTime: 4950,
     localStorageKey: 'Note5.notes',
     instanceId: null,
     currentEmail: null,
@@ -20,7 +21,7 @@ var Note5 = {
         // Generate or load application unique identifier
         this.getInstanceId();
     
-        if(window.localStorage) {
+        if('localStorage' in window && window['localStorage'] !== null) { // http://diveintohtml5.org/detect.html
             // Load notes from local storage
             this.doc.loadLocal();
         } else {
@@ -83,6 +84,7 @@ var Note5 = {
             }
         },
     
+        // Used by old loadLocal routine
         findIndexByName: function(name) {
             for(var i = 0; i < this.notes.length; i++) {
                 if(this.notes[i].name == name)
@@ -107,29 +109,29 @@ var Note5 = {
                 currentNoteName = this.notes[this.currentNoteIndex].name;
             data = { notes: this.notes, currentNoteName: currentNoteName };
             json = JSON.stringify(data);
-            window.localStorage.setItem(Note5.localStorageKey, json);
+            localStorage.setItem(Note5.localStorageKey, json);
             */
             // New routine
             for(i = 0; i < this.docIds.length; i++) {
                 json = JSON.stringify(this.notes[i]);
-                window.localStorage.setItem(this.notes[i].docId, json);
+                localStorage.setItem(this.notes[i].docId, json);
             }
             json = JSON.stringify(this.docIds);
-            window.localStorage.setItem('Note5.docIds', json);
-            window.localStorage.setItem('Note5.currentDocId', this.notes[this.currentNoteIndex].docId);
+            localStorage.setItem('Note5.docIds', json);
+            localStorage.setItem('Note5.currentDocId', this.notes[this.currentNoteIndex].docId);
         },
         
         // Save current document to local storage
         saveCurrent: function() {
             currentNote = this.getCurrentNote();
             json = JSON.stringify(currentNote);
-            window.localStorage.setItem(currentNote['docId'], json);
+            localStorage.setItem(currentNote['docId'], json);
         },
     
         // Load from local storage (requires HTML5 support)
         loadLocal: function() {
             // Old routine
-            json = window.localStorage.getItem(Note5.localStorageKey);
+            json = localStorage.getItem(Note5.localStorageKey);
             if(json) {
                 data = JSON.parse(json);
                 if(data) {
@@ -150,20 +152,21 @@ var Note5 = {
                 this.saveLocal();
                 
                 // Delete old format
-                window.localStorage.removeItem(Note5.localStorageKey);
+                localStorage.removeItem(Note5.localStorageKey);
                 this.notes = [];
                 this.currentNoteIndex = -1;
                 this.docIds = [];
             }
             
             // New routine
-            json = window.localStorage.getItem('Note5.docIds');
+            json = localStorage.getItem('Note5.docIds');
             if(json) {
                 data = JSON.parse(json);
                 if(data) {
                     this.docIds = data;
+
                     for(i = 0; i < data.length; i++) {
-                        json = window.localStorage.getItem(data[i]);
+                        json = localStorage.getItem(data[i]);
                         if(json) {
                             note = JSON.parse(json);
                             if(note) {
@@ -173,7 +176,7 @@ var Note5 = {
                     }
                 }
             }
-            var currentDocId = window.localStorage.getItem('Note5.currentDocId');
+            var currentDocId = localStorage.getItem('Note5.currentDocId');
             this.currentNoteIndex = this.findIndexById(currentDocId);
             
             // If it can't find the correct current note, set it to the last
@@ -288,10 +291,9 @@ var Note5 = {
         var newDoc = new Note5Doc();
         this.doc.setIndex(this.doc.add(newDoc)-1);
         this.doc.docIds.push(newDoc.docId);
-        this.view.refreshNote();
+        this.doc.saveLocal(); // Update docIdList
         this.view.refreshPage(true);
-        this.showNote();
-        $('#note').focus();
+        this.cmdMakeActive(newDoc.docId);
     },
     
     //Command: Make the selected note active
@@ -299,11 +301,12 @@ var Note5 = {
         var index = this.doc.findIndexById(docId);
         if(index >= 0 ) {
             this.doc.setIndex(index);
-            this.doc.saveLocal();
+            //this.doc.saveLocal();
             this.showNote();
-            this.view.refreshSavedArea();
+            //this.view.refreshSavedArea();
             this.view.refreshNote();
             $('#note').focus();
+            $('#note').putCursorAtEnd();
         }
     },
     
@@ -330,9 +333,10 @@ var Note5 = {
             this.doc.setIndex(-1);
             this.cmdNew();
         }
-        this.doc.saveLocal();
+        this.doc.saveLocal(); // Update docIdList
         this.view.refreshSavedArea();
-        this.view.refreshNote();
+        //this.view.refreshNote();
+        localStorage.removeItem(docId);
     },
     
     showNote: function() {
@@ -344,6 +348,8 @@ var Note5 = {
     //Utility functions
     setupButtonHandlers: function() {
         $('#button_saved').click( function() {
+            // Home
+            Note5.view.refreshPage();
             $('#main').hide();
             $('#saved').show();
             $('#config').hide();
@@ -361,7 +367,7 @@ var Note5 = {
     
     resetApplication: function() {
         // Reset localstorage
-        localStorage.removeItem(Note5.localStorageKey);
+        localStorage.clear();
         $('#saved_message').html('Application has been reset: '+(new Date()).get8601Time());
     },
     
@@ -436,7 +442,7 @@ var Note5 = {
     setCurrentEmail: function(email) { 
         Note5.currentEmail = email;
         if(Note5.currentEmail) { 
-            $('#login').html(Note5.currentEmail+'<br><a href="api/?action=logout&instanceId='+
+            $('#login').html(Note5.currentEmail+' | <a href="api/?action=logout&instanceId='+
                 Note5.instanceId+'">Sign out</a>');
         }
     },
