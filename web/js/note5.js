@@ -8,7 +8,7 @@ var Note5Doc = function() {
 
 //Note5 Application static class
 var Note5 = {
-    updateTime: 800,
+    updateTime: 1500,
     localStorageKey: 'Note5.notes',
     instanceId: null,
     currentEmail: null,
@@ -39,33 +39,27 @@ var Note5 = {
             this.view.refreshNote();
        }
     
-        // Resize width on device flip (iOS)
-        //window.onorientationchange=this.onresize;
-    
-        // Resize the note textarea width
-        //$(window).resize(this.onresize);
-    
-        // Force element width update
-        //this.onresize();
-    
-        setTimeout('Note5.view.refreshPage()', Note5.updateTime);
+        setTimeout('Note5.view.refreshPage()', this.updateTime);
 
         // Attach main button handlers
         this.setupButtonHandlers();
         
-        // Indicate that initialization is complete
-        //$('#note').css('background', '#ffc');
-        $('#note').removeAttr('disabled');
-        
         // Set up vertical auto resize handler
         $('textarea#note').autoResize({});
+        
+        $('textarea#note')
+            .unbind('.noteChange')
+            .bind('keyup.noteChange', this.view.noteChanged)
+            .bind('keydown.noteChange', this.view.noteChanged)
+            .bind('change.noteChange', this.view.noteChanged);
+
+        // Indicate that initialization is complete
+        $('#note').removeAttr('disabled');
         
         // Check to see if we're logged in (do this last to minimize loading delay)
         $.get('api/?action=checklogin&instanceId='+Note5.instanceId, function(data) {Note5.setCurrentEmail(data);}, 'html'); 
         
         // TODO: Check for new documents
-        
-        //CacheHelper.setStatusDiv('#offlineStatus'); 
     },
     
     //Document subclass
@@ -80,10 +74,13 @@ var Note5 = {
         getCurrentNote: function() { 
             if(this.currentNoteIndex >= 0) 
                 return this.notes[this.currentNoteIndex];
+            return null;
         },
-        updateCurrent: function(content) { 
-            this.notes[this.currentNoteIndex].content = content;
-            this.view.refreshNote();
+        updateCurrent: function(content) {
+            if(this.currentNoteIndex >= 0) {
+                this.notes[this.currentNoteIndex].content = content;
+                //this.view.refreshNote();
+            }
         },
     
         findIndexByName: function(name) {
@@ -104,7 +101,7 @@ var Note5 = {
     
         // Save to local storage (requires HTML5 support)
         saveLocal: function() {
-            // Old routine
+            // Old routine (for reference)
             /*currentNoteName = ''; 
             if(this.currentNoteIndex >= 0)
                 currentNoteName = this.notes[this.currentNoteIndex].name;
@@ -189,26 +186,48 @@ var Note5 = {
     view: {
         doc: null,
         updateRunning: false,
+        noteChangedRunning: false,
+        pageDirty: false,
+        
+        // Called when the note text area is changed
+        noteChanged: function() {
+            if(this.noteChangedRunning) return;
+            this.noteChangedRunning = true;
+
+            var noteVal = $('#note').val();
+            // TODO: Why is it necessary to use Note5. instead of this.?
+            var currentNote = Note5.doc.getCurrentNote();
+            if(currentNote == null || noteVal == currentNote.content) {
+                this.noteChangedRunning = false;
+                return;
+            }
+            
+            // Save contents to memory
+            Note5.doc.updateCurrent(noteVal);
+        
+            Note5.view.pageDirty = true;
+            $('#status_saving').show();
+            
+            this.noteChangedRunning = false;
+        },
     
         // Refresh everything that needs to be updated every updateTime milliseconds
         refreshPage: function(force) {
             if(this.updateRunning) return;
             this.updateRunning = true;
-        
+            
             // If text hasn't changed since last update, return
             var noteVal = $('#note').val();
-            if(!force && noteVal == this.doc.getCurrentNote().content) {
+            if(!force && !this.pageDirty) {
                 setTimeout('Note5.view.refreshPage()', Note5.updateTime);
                 this.updateRunning = false;
                 return;
             }
         
             // Save note content to doc
-            this.doc.updateCurrent(noteVal);
             this.doc.saveCurrent();
-        
-            // Save all notes locally
-            this.doc.saveLocal();
+            this.pageDirty = false;
+            $('#status_saving').hide();
         
             // Update list of saved documents
             this.refreshSavedArea();
@@ -261,6 +280,7 @@ var Note5 = {
             $('#note').val(this.doc.getCurrentNote().content);
             $('#note').keydown(); // resize textarea    
         }
+        
     },
     
     //Command: Create a new note

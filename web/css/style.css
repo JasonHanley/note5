@@ -216,17 +216,14 @@ table#menu_bar tr td {
     cursor: pointer;
 }
 
-.button-mobile img.icon {
+img.icon {
     width: 1.8em;
     height: 1.8em;
-    margin: 2px;
     vertical-align: middle;
 }
 
-button img.icon {
-    width: 1.8em;
-    height: 1.8em;
-    vertical-align: middle;
+.button-mobile img.icon {
+    margin: 2px;
 }
 
 button.icon {
@@ -293,6 +290,13 @@ table.fileList tr.active td {
     float: right;
     margin-right: 4px;
     margin-top: 4px;
+}
+
+#right_status {
+    float: right;
+    height: 2em;
+    padding-top: .3em;
+    padding-right: .3em;
 }
 
 @media all and (orientation:portrait) {
