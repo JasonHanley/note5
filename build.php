@@ -39,17 +39,10 @@ array_push($files, '# Version '.time());
 
 addFiles($files, 'favicon.ico');
 addFiles($files, 'apple-touch-icon.png');
-addFiles($files, 'css/*.css', true);
-addFiles($files, 'css/smoothness/*.css', true);
+addFiles($files, 'apple-touch-icon-precomposed.png');
+addFiles($files, 'css/style.css', true);
 addFiles($files, 'js/*.js', true);
-addFiles($files, 'js/libs/json2-min.js', true);
-addFiles($files, 'js/libs/localstorage.js', true);
-addFiles($files, 'js/libs/modernizr-1.6.min.js');
-addFiles($files, 'js/libs/autoresize.jquery.js');
 addFiles($files, 'images/*');
-addFiles($files, 'css/smoothness/images/*');
-array_push($files, 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js');
-array_push($files, 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.min.js');
 
 array_push($files, "\nFALLBACK:");
 array_push($files, '/ offline.html');
