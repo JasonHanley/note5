@@ -5,12 +5,14 @@ var Note5Doc = function() {
     this.content = '';
     this.docId = guidGenerator();
     this.lastWrite = null;
+    this.isDirty = false;
 };
 
 //Note5 Application static class
 var Note5 = {
     updateTime: 4950,
     localStorageKey: 'Note5.notes',
+    lastWrite: 0,
     instanceId: null,
     currentEmail: null,
     init: function() {
@@ -72,6 +74,14 @@ var Note5 = {
         setIndex: function(i) { this.currentNoteIndex = i; },
         add: function(doc) { return this.notes.push(doc); },
         getNote: function(i) { return notes[i]; },
+        getNoteById: function(docId) {
+            var index = this.findIndexById(docId);
+            if(index >= 0) {
+                return this.notes[index];
+            }
+            
+            return null;
+        },
         getCurrentNote: function() { 
             if(this.currentNoteIndex >= 0) 
                 return this.notes[this.currentNoteIndex];
@@ -205,6 +215,9 @@ var Note5 = {
                 return;
             }
             
+            // Mark note changed
+            currentNote.isDirty = true;
+            
             // Save contents to memory
             Note5.doc.updateCurrent(noteVal);
         
@@ -227,19 +240,143 @@ var Note5 = {
                 return;
             }
         
-            // Save note content to doc
+            // Save note content to localStorage
             this.doc.saveCurrent();
             this.pageDirty = false;
             $('#status_saving').hide();
-        
+            
             // Update list of saved documents
             this.refreshSavedArea();
+            
+            $('#status_syncing').show();
+            
+            // ServerToLocal API update
+            $.get('api/?action=stl&i='+Note5.instanceId+'&llw='+Note5.lastWrite, Note5.view.serverToLocalProcess);
         
             //date = new Date();
             //console.log('refreshPage '+date.get8601Date() + '.' + date.get8601Time());
         
             setTimeout('Note5.view.refreshPage()', Note5.updateTime);
             this.updateRunning = false;
+        },
+        
+        serverToLocalProcess: function(data) {
+            $('#status-message').html(data);
+            
+            serverData = JSON.parse(data);
+            
+            var lastWriteServer = serverData['lws'];
+            var newLastWriteServer = serverData['nlws'];
+            var oldDocs = serverData['oldDocs'];
+            var newDocs = serverData['newDocs'];
+            
+            var deleteList = [];
+            var updateList = [];
+            
+            // Loop through old server notes
+            for(i = 0; i < oldDocs.length; i++) {
+                var doc = oldDocs[i];
+                
+                // If we don't have an old document locally, it should be deleted from the server
+                if(!jQuery.inArray(doc['doc_id'], Note5.doc.docIds)) {
+                    deleteList.push(doc['doc_id']);
+                }
+            }
+            
+            // Loop through new server notes for ones we don't have yet
+            for(i = 0; i < newDocs.length; i++) {
+                var doc = newDocs[i];
+                
+                // If we don't have a new document locally, add it
+                if(!jQuery.inArray(doc['doc_id'], Note5.doc.docIds)) {
+                    var newDoc = new Note5Doc();
+                    newDoc.name = doc['name'];
+                    newDoc.content = doc['content'];
+                    newDoc.lastWrite = doc['last_write'];
+                    this.doc.add(newDoc);
+                    this.doc.docIds.push(newDoc.docId);
+                }
+            }
+            
+            var deleteLocalList = []
+            
+            // Loop through all local notes
+            for(i = 0; i < Note5.doc.docIds; i++) {
+                var note = Note5.doc.notes[i];
+                
+                // If our note is out of date, and we find a match, update our copy
+                if(note.lastWrite < lastWriteServer) {
+                    var found = false;
+                    for(j = 0; j < newDocs.length; j++) {
+                        doc = newDocs[j];
+                        if(note.docId == doc['doc_id']) {
+                            found = true;
+                            if(note.lastWrite < doc['last_write']) {
+                                Note5.doc.notes[i].name = doc['name'];
+                                Note5.doc.notes[i].content = doc['content'];
+                                Note5.doc.notes[i].lastWrite = doc['last_write'];
+                            }
+                        }
+                    }
+                    
+                    // If the note no longer exists on the server, delete it locally
+                    if(!found) {
+                        deleteLocalList.push(note.docId);
+                    }
+                } else {
+                    // Figure out if we need to send the file to the server
+                    if(note.isDirty) {
+                        
+                        var found = false;
+                        for(j = 0; j < newDocs.length; j++) {
+                            doc = newDocs[j];
+                            if(note.docId == doc['doc_id']) {
+                                found = true;
+                                // If the server doc is old, update it
+                                if(doc['last_write'] < note.lastWrite ) {
+                                    note.lastWrite = newLastWriteServer;
+                                    updateList.push(note);
+                                    note.isDirty = false;
+                                }
+                            }
+                        }
+                        
+                        // If the server doesn't have the doc, add it to the update list
+                        if(!found) {
+                            note.lastWrite = newLastWriteServer;
+                            updateList.push(note);
+                            note.isDirty = false;
+                        }
+                    }
+                }
+            }
+            
+            // Delete old local documents not found on server
+            for(i = 0; i < deleteLocalList.length; i++) {
+                docId = deleteLocalList[i];
+                removeIndex = this.doc.findIndexById(docId);
+                if(removeIndex >= 0) {
+                    Note5.doc.notes.splice(removeIndex, 1);
+                    Note5.doc.docIds.splice(removeIndex, 1);
+                }
+                localStorage.removeItem(docId);
+            }
+            
+            var docsToUpdate = [];
+            for(i = 0; i < Note5.doc.docIds.length; i++) {
+                docsToUpdate.push(Note5.doc.notes[i]);
+            }
+            var jsonUp = JSON.stringify(docsToUpdate);
+
+            //alert(docsToUpdate);
+            //$.get('api/?action=lts&up='+jsonUp, function(data) {$('#status-message').html(data)} );
+            
+            this.doc.saveLocal(); // Persist docIdList
+            this.view.refreshSavedArea();
+            
+            Note5.lastWrite = newLastWriteServer;
+
+            $('#status_syncing').hide();
         },
     
         //Refresh the 'Saved' tab

@@ -54,7 +54,7 @@ if($action == 'log') {
         FROM user_instance JOIN user ON user_instance.user_id=user.id
         WHERE user_instance.instance=?');
     $sth->execute(array($instanceId));
-    $users = $sth->fetchAll(PDO::FETCH_ASSOC);
+    $users = $sth->fetchAll();
     if($users && count($users)) {
         print $users[0]['email'];
     }
@@ -79,7 +79,7 @@ if($action == 'log') {
         if($openid->validate()) {
             
             $sth = $dbh->query('SELECT id FROM user WHERE identity="'.$openid->identity.'"');
-            $user = $sth->fetch(PDO::FETCH_ASSOC);
+            $user = $sth->fetch();
             if($user) {
                 $userId = $user['id'];
                 $dbh->query('UPDATE user SET last_login="'.date('Y-m-d H:i:s', time()).'" WHERE id='.$userId);
@@ -93,7 +93,7 @@ if($action == 'log') {
             
             // Does this instance already have an association? If so, delete it.
             $sth = $dbh->query('SELECT user_id,instance FROM user_instance WHERE instance="'.$instanceId.'"');
-            $instance = $sth->fetch(PDO::FETCH_ASSOC);
+            $instance = $sth->fetch();
             if($instance) {
                 $dbh->query('DELETE FROM user_instance WHERE user_id='.$instance['user_id'].' AND instance="'.$instance['instance'].'"');
             }
@@ -126,6 +126,71 @@ if($action == 'log') {
      grant_type=authorization_code
      */
 
+} elseif($action == 'stl') { // ServerToLocal
+
+    $instance = $_REQUEST['i'];
+    $localLastWrite = $_REQUEST['llw'];
+    
+    $sth = $dbh->prepare('SELECT user_id FROM user_instance WHERE instance=? LIMIT 1');
+    $sth->execute(array($instance));
+    $user = $sth->fetch();
+    if($user) {
+        $user_id = $user['user_id'];
+            
+        $sth = $dbh->query('SELECT last_write FROM docs WHERE user_id='.$user_id.' ORDER BY last_write DESC LIMIT 1');
+        $doc = $sth->fetch();
+        
+        if($doc) {
+            $lastWriteServer = $doc['last_write'];
+            $newLastWriteServer = time();
+
+            // Retrieve ids and mod times for docs modified before local was last updated
+            $sth = $dbh->prepare('SELECT doc_id,last_write FROM docs WHERE last_write <= ?');
+            $sth->execute(array($localLastWrite));
+            $oldDocs = $sth->fetchAll();
+            
+            // Retrieve all documents modified since local was last updated
+            $sth = $dbh->prepare('SELECT * FROM docs WHERE last_write > ?');
+            $sth->execute(array($localLastWrite));
+            $newDocs = $sth->fetchAll();
+            
+            $ret = array('lws' => $lastWriteServer, 'nlws' => $newLastWriteServer, 
+                'oldDocs' => $oldDocs, 'newDocs' => $newDocs);
+            $ret_json = json_encode($ret);
+            echo $ret_json;
+        }
+    }
+    
+} elseif($action == 'lts') { // LocalToServer
+
+    $lastWriteServer = time();
+    $instance = $_REQUEST['i'];
+    $lastServerLastWrite = $_REQUEST['lslw'];
+    $deletes_json = $_REQUEST['del'];
+    $updates_json = $_REQUEST['up'];
+    $deletes = json_decode($deletes_json, true, 8);
+    $updates = json_decode($updates_json, true, 8);
+    
+    echo $updates_json.'<br>';
+    print_r($updates);
+    
+    if($deletes) {
+        foreach($deletes as $docId) {
+            $dbh->query('DELETE FROM docs WHERE doc_id='.$docId);
+        }
+    }
+    
+    if($updates) {
+        foreach($updates as $doc) {
+            $sth = $dbh->prepare('REPLACE INTO docs (doc_id, name, content, last_write) VALUES (?, ?, ?, ?)');
+            $sth->execute(array($doc['docId'], $doc['name'], $doc['content'], $lastWriteServer));
+        }
+    }
+    
+    $ret = array('lws' => $lastWriteServer);
+    $ret_json = json_encode($ret);
+    echo $ret_json;
+    
 } else {
     echo 'Undefined action.';
 }

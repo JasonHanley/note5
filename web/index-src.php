@@ -115,6 +115,7 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
     </div>
 </div>
 
+<div id="status-message"></div>
 
 <div id="dialog-confirm-delete" title="Confirm delete"
     style="display: none;">This item will be permanently deleted.
