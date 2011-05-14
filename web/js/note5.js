@@ -12,7 +12,7 @@ var Note5Doc = function() {
 var Note5 = {
     updateTime: 4950,
     localStorageKey: 'Note5.notes',
-    lastWrite: 0,
+    lastWrite: -1,
     instanceId: null,
     currentEmail: null,
     init: function() {
@@ -283,9 +283,12 @@ var Note5 = {
             for(i = 0; i < oldDocs.length; i++) {
                 var doc = oldDocs[i];
                 
-                // If we don't have an old document locally, it should be deleted from the server
-                if(jQuery.inArray(doc['doc_id'], Note5.doc.docIds) == -1) {
-                    deleteList.push(doc['doc_id']);
+                // Only do this if our set of notes is newer than the servers
+                if(Note5.lastWrite > lastWriteServer) {
+                    // If we don't have an old document locally, it should be deleted from the server
+                    if(jQuery.inArray(doc['doc_id'], Note5.doc.docIds) == -1) {
+                        deleteList.push(doc['doc_id']);
+                    }
                 }
             }
             
