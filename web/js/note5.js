@@ -4,7 +4,7 @@ var Note5Doc = function() {
     this.name = date.get8601Date() + ' ' + date.get8601Time();
     this.content = '';
     this.docId = guidGenerator();
-    this.lastWrite = null;
+    this.lastWrite = 0;
     this.isDirty = false;
 };
 
@@ -129,6 +129,7 @@ var Note5 = {
             json = JSON.stringify(this.docIds);
             localStorage.setItem('Note5.docIds', json);
             localStorage.setItem('Note5.currentDocId', this.notes[this.currentNoteIndex].docId);
+            localStorage.setItem('Note5.lastWrite', Note5.lastWrite);
         },
         
         // Save current document to local storage
@@ -187,6 +188,9 @@ var Note5 = {
                 }
             }
             var currentDocId = localStorage.getItem('Note5.currentDocId');
+            var lastWrite = localStorage.getItem('Note5.lastWrite');
+            if(lastWrite)
+                Note5.lastWrite = lastWrite;
             this.currentNoteIndex = this.findIndexById(currentDocId);
             
             // If it can't find the correct current note, set it to the last
@@ -261,7 +265,7 @@ var Note5 = {
         },
         
         serverToLocalProcess: function(data) {
-            $('#status-message').html(data);
+            $('#status-message').append(data+'<br>');
             
             serverData = JSON.parse(data);
             
@@ -278,7 +282,7 @@ var Note5 = {
                 var doc = oldDocs[i];
                 
                 // If we don't have an old document locally, it should be deleted from the server
-                if(!jQuery.inArray(doc['doc_id'], Note5.doc.docIds)) {
+                if(jQuery.inArray(doc['doc_id'], Note5.doc.docIds) == -1) {
                     deleteList.push(doc['doc_id']);
                 }
             }
@@ -288,7 +292,7 @@ var Note5 = {
                 var doc = newDocs[i];
                 
                 // If we don't have a new document locally, add it
-                if(!jQuery.inArray(doc['doc_id'], Note5.doc.docIds)) {
+                if(jQuery.inArray(doc['doc_id'], Note5.doc.docIds) == -1) {
                     var newDoc = new Note5Doc();
                     newDoc.name = doc['name'];
                     newDoc.content = doc['content'];
@@ -301,7 +305,7 @@ var Note5 = {
             var deleteLocalList = []
             
             // Loop through all local notes
-            for(i = 0; i < Note5.doc.docIds; i++) {
+            for(i = 0; i < Note5.doc.docIds.length; i++) {
                 var note = Note5.doc.notes[i];
                 
                 // If our note is out of date, and we find a match, update our copy
@@ -362,21 +366,15 @@ var Note5 = {
                 localStorage.removeItem(docId);
             }
             
-            var docsToUpdate = [];
-            for(i = 0; i < Note5.doc.docIds.length; i++) {
-                docsToUpdate.push(Note5.doc.notes[i]);
-            }
-            var jsonUp = JSON.stringify(docsToUpdate);
+            var jsonUp = JSON.stringify(updateList);
+            var jsonDel = JSON.stringify(deleteList);
 
-            //alert(docsToUpdate);
-            //$.get('api/?action=lts&up='+jsonUp, function(data) {$('#status-message').html(data)} );
-            
-            this.doc.saveLocal(); // Persist docIdList
-            this.view.refreshSavedArea();
-            
             Note5.lastWrite = newLastWriteServer;
+            Note5.doc.saveLocal(); // Persist docIdList
+            Note5.view.refreshSavedArea();
 
-            $('#status_syncing').hide();
+            $.post('api/?action=lts', {i: Note5.instanceId, lslw: newLastWriteServer, up: jsonUp, del: jsonDel}, 
+                function(data) { $('#status-message').append(data+'<br>'); $('#status_syncing').hide(); } );
         },
     
         //Refresh the 'Saved' tab

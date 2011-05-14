@@ -128,41 +128,49 @@ if($action == 'log') {
 
 } elseif($action == 'stl') { // ServerToLocal
 
+    $ret = array();
     $instance = $_REQUEST['i'];
     $localLastWrite = $_REQUEST['llw'];
+    
+    $lastWriteServer = -1;
+    $newLastWriteServer = time();
+    $oldDocs = array();
+    $newDocs = array();
     
     $sth = $dbh->prepare('SELECT user_id FROM user_instance WHERE instance=? LIMIT 1');
     $sth->execute(array($instance));
     $user = $sth->fetch();
     if($user) {
         $user_id = $user['user_id'];
-            
+        
         $sth = $dbh->query('SELECT last_write FROM docs WHERE user_id='.$user_id.' ORDER BY last_write DESC LIMIT 1');
         $doc = $sth->fetch();
         
         if($doc) {
             $lastWriteServer = $doc['last_write'];
-            $newLastWriteServer = time();
 
             // Retrieve ids and mod times for docs modified before local was last updated
             $sth = $dbh->prepare('SELECT doc_id,last_write FROM docs WHERE last_write <= ?');
             $sth->execute(array($localLastWrite));
-            $oldDocs = $sth->fetchAll();
+            $oldDocs = $sth->fetchAll(PDO::FETCH_ASSOC);
             
             // Retrieve all documents modified since local was last updated
             $sth = $dbh->prepare('SELECT * FROM docs WHERE last_write > ?');
             $sth->execute(array($localLastWrite));
-            $newDocs = $sth->fetchAll();
-            
-            $ret = array('lws' => $lastWriteServer, 'nlws' => $newLastWriteServer, 
-                'oldDocs' => $oldDocs, 'newDocs' => $newDocs);
-            $ret_json = json_encode($ret);
-            echo $ret_json;
+            $newDocs = $sth->fetchAll(PDO::FETCH_ASSOC);
         }
+    } else {
+        $ret['error'] = 'User not found.';
     }
+            
+    $ret += array('lws' => $lastWriteServer, 'nlws' => $newLastWriteServer, 
+        'oldDocs' => $oldDocs, 'newDocs' => $newDocs);
+    $ret_json = json_encode($ret);
+    echo $ret_json;
     
 } elseif($action == 'lts') { // LocalToServer
 
+    $ret = array();
     $lastWriteServer = time();
     $instance = $_REQUEST['i'];
     $lastServerLastWrite = $_REQUEST['lslw'];
@@ -171,23 +179,30 @@ if($action == 'log') {
     $deletes = json_decode($deletes_json, true, 8);
     $updates = json_decode($updates_json, true, 8);
     
-    echo $updates_json.'<br>';
-    print_r($updates);
+    $sth = $dbh->prepare('SELECT user_id FROM user_instance WHERE instance=? LIMIT 1');
+    $sth->execute(array($instance));
+    $user = $sth->fetch();
+    if($user) {
+        $user_id = $user['user_id'];
     
-    if($deletes) {
-        foreach($deletes as $docId) {
-            $dbh->query('DELETE FROM docs WHERE doc_id='.$docId);
+        if($deletes) {
+            foreach($deletes as $docId) {
+                $dbh->query('DELETE FROM docs WHERE doc_id="'.$docId.'" AND user_id='.$user_id);
+            }
         }
+        
+        if($updates) {
+            foreach($updates as $doc) {
+                $sth = $dbh->prepare('REPLACE INTO docs (doc_id, user_id, name, content, last_write) VALUES (?, ?, ?, ?, ?)');
+                $sth->execute(array($doc['docId'], $user_id, $doc['name'], $doc['content'], $lastServerLastWrite));
+            }
+        }
+    } else {
+        $ret['error'] = 'User not found.';
     }
     
-    if($updates) {
-        foreach($updates as $doc) {
-            $sth = $dbh->prepare('REPLACE INTO docs (doc_id, name, content, last_write) VALUES (?, ?, ?, ?)');
-            $sth->execute(array($doc['docId'], $doc['name'], $doc['content'], $lastWriteServer));
-        }
-    }
     
-    $ret = array('lws' => $lastWriteServer);
+    $ret += array('lws' => $lastWriteServer, 'updates' => $updates, 'deletes' => $deletes);
     $ret_json = json_encode($ret);
     echo $ret_json;
     
