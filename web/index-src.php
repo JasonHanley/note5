@@ -66,6 +66,7 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
     <div id="button_saved" class="button-mobile"><img src="images/gnome_home.png" class="icon" alt="Home" title="Home" /><span id="num_saved"></span></div>
     <div id="button_new" class="button-mobile"><img src="images/gnome_new.png" class="icon" alt="New" title="New" /></div>
     <div id="button_config" class="button-mobile"><img src="images/gnome_system.png" class="icon" alt="Config" title="Config" /></div>
+    <div id="button_login" class="button-mobile" style="display:none;"><img src="images/g_favicon.png" class="icon" alt="Sign in" title="Sign in" /></div>
     <div id="button_sync" class="button-mobile" style="display:none;"><img src="images/gnome_sync.png" class="icon" alt="Sync" title="Sync" /></div>
     <div id="right_status">
         <img id="status_saving" src="images/gnome_saving.png" class="icon" style="display:none;" />
@@ -85,7 +86,7 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
 </div>
 
 <div id="config" style="display: none">
-    <div id="login">Sign in</div>
+    <div id="login"></div>
     <div style="padding:0.5em;">
     <h2 style="margin-top: 1.5em;">note5 | HTML5 Notepad</h2>
     <span style="float: left;"><img src="apple-touch-icon.png"

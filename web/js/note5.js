@@ -529,6 +529,10 @@ var Note5 = {
         $('#button_sync').click( function() {
             Note5.view.refreshPage(true); 
         });
+        $('#button_login').click( function() {
+            window.location = 'api/?action=glogin&instanceId='+Note5.instanceId;        
+        });
+        
     },
     
     resetApplication: function() {
@@ -616,6 +620,9 @@ var Note5 = {
             
             // Do a sync, if necessary
             Note5.view.refreshPage(true);
+        } else {
+            // Show the login button
+            $('#button_login').show();
         }
     },
 
