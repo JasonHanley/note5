@@ -264,8 +264,8 @@ var Note5 = {
         },
         
         serverToLocalProcess: function(data) {
-            $('#last-write').html(Note5.lastWrite);
-            $('#status-message').append(data+'<br>');
+            //$('#last-write').html(Note5.lastWrite);
+            //$('#status-message').append(data+'<br>');
             
             serverData = JSON.parse(data);
             
@@ -283,8 +283,8 @@ var Note5 = {
             for(i = 0; i < oldDocs.length; i++) {
                 var doc = oldDocs[i];
                 
-                // Only do this if our set of notes is newer than the servers
-                if(Note5.lastWrite > lastWriteServer) {
+                // Only do this if our set of notes is newer than the server's doc
+                if(Note5.lastWrite > doc['last_write']) {
                     // If we don't have an old document locally, it should be deleted from the server
                     if(jQuery.inArray(doc['doc_id'], Note5.doc.docIds) == -1) {
                         deleteList.push(doc['doc_id']);
@@ -401,8 +401,8 @@ var Note5 = {
 
             $.post('api/?action=lts', {i: Note5.instanceId, lslw: newLastWriteServer, up: jsonUp, del: jsonDel}, 
                 function(data) {
-                    $('#last-write').html(Note5.lastWrite);                
-                    $('#status-message').append(data+'<br>'); 
+                    //$('#last-write').html(Note5.lastWrite);                
+                    //$('#status-message').append(data+'<br>'); 
                     $('#status_syncing').hide();
                 } );
         },
@@ -532,7 +532,6 @@ var Note5 = {
         $('#button_login').click( function() {
             window.location = 'api/?action=glogin&instanceId='+Note5.instanceId;        
         });
-        
     },
     
     resetApplication: function() {
