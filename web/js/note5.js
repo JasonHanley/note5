@@ -48,15 +48,9 @@ var Note5 = {
         // If there are no notes, create one
         if(this.doc.notes.length < 1) {
             this.cmdNew();
-            //$('#note').val('Just start typing. Your notes are auto-saved!');
-            //this.view.noteChanged();
-            //this.doc.saveCurrent();
         }
-        else {
-            //this.view.refreshSavedArea();
-            //this.view.refreshNote();
-       }
     
+        // Force a refresh immediately
         Note5.view.refreshPage(true);        
         setTimeout('Note5.view.refreshPage()', this.updateTime);
         
@@ -65,8 +59,6 @@ var Note5 = {
         
         // Check to see if we're logged in (do this last to minimize loading delay)
         $.get('api/?action=checklogin&instanceId='+Note5.instanceId, function(data) {Note5.setCurrentEmail(data);}, 'html'); 
-        
-        // TODO: Check for new documents
     },
     
     //Document subclass
@@ -420,6 +412,7 @@ var Note5 = {
             var savedList = '<table class="fileList">';
             
             // List documents in "most recently created first" order
+            // TODO: Sort by name? Otherwise sorting gets mixed up with syncing
             for(var i = (this.doc.notes.length-1); i >= 0; i--) {
                 var note = this.doc.notes[i];
                 var content = note.content;
@@ -474,9 +467,7 @@ var Note5 = {
         var index = this.doc.findIndexById(docId);
         if(index >= 0 ) {
             this.doc.setIndex(index);
-            //this.doc.saveLocal();
             this.showNote();
-            //this.view.refreshSavedArea();
             this.view.refreshNote();
             $('#note').focus();
             $('#note').putCursorAtEnd();
@@ -534,7 +525,10 @@ var Note5 = {
         });
         $('#button_new').click( function() {
             Note5.cmdNew();
-        })
+        });
+        $('#button_sync').click( function() {
+            Note5.view.refreshPage(true); 
+        });
     },
     
     resetApplication: function() {
@@ -616,8 +610,12 @@ var Note5 = {
         if(Note5.currentEmail) { 
             $('#login').html(Note5.currentEmail+' | <a href="api/?action=logout&instanceId='+
                 Note5.instanceId+'">Sign out</a>');
+            
+            // Show the sync button
+            $('#button_sync').show();
+            
             // Do a sync, if necessary
-            Note5.view.refreshPage(true);            
+            Note5.view.refreshPage(true);
         }
     },
 
