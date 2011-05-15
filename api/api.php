@@ -171,8 +171,8 @@ if($action == 'log') {
     $lastServerLastWrite = $_REQUEST['lslw'];
     $deletes_json = $_REQUEST['del'];
     $updates_json = $_REQUEST['up'];
-    $deletes = json_decode($deletes_json, true, 8);
-    $updates = json_decode($updates_json, true, 8);
+    $deletes = json_decode($deletes_json, true);
+    $updates = json_decode($updates_json, true);
     
     $sth = $dbh->prepare('SELECT user_id FROM user_instance WHERE instance=? LIMIT 1');
     $sth->execute(array($instance));
