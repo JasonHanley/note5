@@ -14,7 +14,7 @@ var Note5 = {
     localStorageKey: 'Note5.notes',
     lastWrite: -1,
     instanceId: null,
-    currentEmail: null,
+    currentEmail: '',
     init: function() {
         //window.onerror = this.errorHandler; *** Completely disable error handling until we can figure out how to make it work offline
         this.doc.view = this.view;
@@ -32,30 +32,34 @@ var Note5 = {
             return;
         }
         
-        // If there are no notes, create one
-        if(this.doc.notes.length < 1) {
-            this.cmdNew();
-            this.doc.saveCurrent();
-        }
-        else {
-            this.view.refreshSavedArea();
-            this.view.refreshNote();
-       }
-    
-        setTimeout('Note5.view.refreshPage()', this.updateTime);
-
-        // Attach main button handlers
-        this.setupButtonHandlers();
-        
         // Set up vertical auto resize handler
         $('textarea#note').autoResize({});
         
+        // Set up note change handler
         $('textarea#note')
             .unbind('.noteChange')
             .bind('keyup.noteChange', this.view.noteChanged)
             .bind('keydown.noteChange', this.view.noteChanged)
             .bind('change.noteChange', this.view.noteChanged);
 
+        // Attach main button handlers
+        this.setupButtonHandlers();
+        
+        // If there are no notes, create one
+        if(this.doc.notes.length < 1) {
+            this.cmdNew();
+            //$('#note').val('Just start typing. Your notes are auto-saved!');
+            //this.view.noteChanged();
+            //this.doc.saveCurrent();
+        }
+        else {
+            //this.view.refreshSavedArea();
+            //this.view.refreshNote();
+       }
+    
+        Note5.view.refreshPage(true);        
+        setTimeout('Note5.view.refreshPage()', this.updateTime);
+        
         // Indicate that initialization is complete
         $('#note').removeAttr('disabled');
         
@@ -252,11 +256,14 @@ var Note5 = {
             // Update list of saved documents
             this.refreshSavedArea();
             
-            $('#status_syncing').show();
+            // If we are logged in, start the sync process
+            if(Note5.currentEmail.length) {
+                $('#status_syncing').show();
+                
+                // ServerToLocal API update
+                $.get('api/?action=stl&i='+Note5.instanceId+'&llw='+Note5.lastWrite, Note5.view.serverToLocalProcess);
+            }
             
-            // ServerToLocal API update
-            $.get('api/?action=stl&i='+Note5.instanceId+'&llw='+Note5.lastWrite, Note5.view.serverToLocalProcess);
-        
             //date = new Date();
             //console.log('refreshPage '+date.get8601Date() + '.' + date.get8601Time());
         
@@ -265,6 +272,7 @@ var Note5 = {
         },
         
         serverToLocalProcess: function(data) {
+            $('#last-write').html(Note5.lastWrite);
             $('#status-message').append(data+'<br>');
             
             serverData = JSON.parse(data);
@@ -299,6 +307,7 @@ var Note5 = {
                 // If we don't have a new document locally, add it
                 if(jQuery.inArray(doc['doc_id'], Note5.doc.docIds) == -1) {
                     var newDoc = new Note5Doc();
+                    newDoc.docId = doc['doc_id'];
                     newDoc.name = doc['name'];
                     newDoc.content = doc['content'];
                     newDoc.lastWrite = doc['last_write'];
@@ -399,7 +408,11 @@ var Note5 = {
             Note5.view.refreshSavedArea();
 
             $.post('api/?action=lts', {i: Note5.instanceId, lslw: newLastWriteServer, up: jsonUp, del: jsonDel}, 
-                function(data) { $('#status-message').append(data+'<br>'); $('#status_syncing').hide(); } );
+                function(data) {
+                    $('#last-write').html(Note5.lastWrite);                
+                    $('#status-message').append(data+'<br>'); 
+                    $('#status_syncing').hide();
+                } );
         },
     
         //Refresh the 'Saved' tab
@@ -603,6 +616,8 @@ var Note5 = {
         if(Note5.currentEmail) { 
             $('#login').html(Note5.currentEmail+' | <a href="api/?action=logout&instanceId='+
                 Note5.instanceId+'">Sign out</a>');
+            // Do a sync, if necessary
+            Note5.view.refreshPage(true);            
         }
     },
 
