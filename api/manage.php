@@ -23,4 +23,12 @@ if(in_array('dump-schema', $argv)) {
         ' '.
         DBConfig::$dbname.' < '.$argv[2]);
     
+} else {
+    
+    echo 'Commands:
+  dump-schema
+  dump-data
+  load-sql [filename]    
+    ';
+    
 }
