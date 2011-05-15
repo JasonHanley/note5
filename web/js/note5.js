@@ -177,6 +177,17 @@ var Note5 = {
                         if(json) {
                             note = JSON.parse(json);
                             if(note) {
+                                // Upgrade old format notes
+                                if(note.docId == undefined) {
+                                    note.docId = guidGenerator();
+                                }
+                                if(note.lastWrite == undefined) {
+                                    note.lastWrite = null;
+                                }
+                                if(note.isDirty == undefined) {
+                                    note.isDirty = true;
+                                }
+                                
                                 this.notes.push(note);
                             }
                         }
