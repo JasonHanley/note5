@@ -219,7 +219,7 @@ var Note5 = {
             this.noteChangedRunning = true;
 
             var noteVal = $('#note').val();
-            // TODO: Why is it necessary to use Note5. instead of this.?
+
             var currentNote = Note5.doc.getCurrentNote();
             if(currentNote == null || noteVal == currentNote.content) {
                 this.noteChangedRunning = false;
@@ -291,19 +291,6 @@ var Note5 = {
             var deleteList = [];
             var updateList = [];
             
-            // Loop through old server notes
-            for(i = 0; i < oldDocs.length; i++) {
-                var doc = oldDocs[i];
-                
-                // Only do this if our set of notes is newer than the server's doc
-                if(Note5.lastWrite > doc['last_write']) {
-                    // If we don't have an old document locally, it should be deleted from the server
-                    if(jQuery.inArray(doc['doc_id'], Note5.doc.docIds) == -1) {
-                        deleteList.push(doc['doc_id']);
-                    }
-                }
-            }
-            
             // Loop through new server notes for ones we don't have yet
             for(i = 0; i < newDocs.length; i++) {
                 var doc = newDocs[i];
@@ -317,6 +304,16 @@ var Note5 = {
                     newDoc.lastWrite = doc['last_write'];
                     Note5.doc.add(newDoc);
                     Note5.doc.docIds.push(newDoc.docId);
+                }
+            }
+            
+            // Loop through old server notes
+            for(i = 0; i < oldDocs.length; i++) {
+                var doc = oldDocs[i];
+                
+                // If we don't have an old document locally, it should be deleted from the server
+                if(jQuery.inArray(doc['doc_id'], Note5.doc.docIds) == -1) {
+                    deleteList.push(doc['doc_id']);
                 }
             }
             
@@ -406,7 +403,6 @@ var Note5 = {
                 Note5.doc.setIndex(-1);
                 Note5.cmdNew();
             }
-            
             
             Note5.doc.saveLocal(); // Persist docIdList
             Note5.view.refreshSavedArea();
