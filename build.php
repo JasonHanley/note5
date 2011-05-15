@@ -48,6 +48,8 @@ array_push($files, "\nFALLBACK:");
 array_push($files, '/ offline.html');
 
 array_push($files, "\nNETWORK:");
+array_push($files, 'api/');
+array_push($files, 'google-analytics.com/ga.js');
 array_push($files, '*');
 
 $manifestFile = fopen('web/cache.manifest', 'wb');
