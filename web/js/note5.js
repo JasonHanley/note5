@@ -261,6 +261,7 @@ var Note5 = {
             
             // If we are logged in, start the sync process
             if(Note5.currentEmail.length) {
+                $('#button_sync').hide();
                 $('#status_syncing').show();
                 
                 // ServerToLocal API update
@@ -415,6 +416,7 @@ var Note5 = {
                     //$('#last-write').html(Note5.lastWrite);                
                     //$('#status-message').append(data+'<br>'); 
                     $('#status_syncing').hide();
+                    $('#button_sync').show();
                 } );
         },
     
