@@ -88,26 +88,37 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
 <div id="config" style="display: none">
     <div id="login"></div>
     <div style="padding:0.5em;">
-    <h2 style="margin-top: 1.5em;">note5 | HTML5 Notepad</h2>
+    <h2 style="margin-top: 3em;">About h5note | HTML5 Notepad</h2>
     <span style="float: left;"><img src="apple-touch-icon.png"
         style="width: 5em; height: 5em; margin: .5em;" /></span> Inspired by
-    the iPad "Notes" application. <br />
-    <br />
-    Very simple. Just start typing. Everything is saved to your system
-    automatically. <br />
-    <br />
-    About the app: <a href="http://www.html5notepad.com/" target="_">www.html5notepad.com</a>
-    <br />
-    <br />
+    the iPad "Notes" application.
+    <br /><br />
+    Very simple. Just start typing. Everything is saved to your system automatically!
+    <br /><br />
+    <b style="color:red;">New!</b> <b>Automatic Synchronization.</b> Just sign in with your Google account.
+    <br /><br />
     Available at the <a
         href="https://chrome.google.com/webstore/detail/olhhcobmolooljldnlapkgfnompogplm"
-        target="_">Chrome Web Store</a> <br />
+        target="_">Chrome Web Store</a>
+    <br /><br />
+    <b style="color:red;">Can't find your old notes?</b> We changed addresses. Go to the old address at 
+    <a href="http://note5.jasonhanley.com" target="_">note5.jasonhanley.com</a>, 
+    sign in and synchronize. Then come back to the new address at 
+    <a href="http://h5note.com" target="_">h5note.com</a>, 
+    sign in and synchronize and you're good to go!
+    <br /><br />
+    <b>Problems or suggestions?</b> 
+        <a href="http://bit.ly/n5support" target="_">http://bit.ly/n5support</a>
+    <br /><br />
+    <b>Version:</b> <?php echo date('Y-m-d G:i:s', time())?>
+    <br /><br />
+    <img src="images/html5-badge-h-css3-semantics-storage.png" alt="Built using HTML5" title="Built using HTML5" />
     <br />
-    <b>Problems or suggestions?</b> Report them here: <a
-        href="http://bit.ly/n5support" target="_">http://bit.ly/n5support</a>
-    <br />
-    <br />
-    Version: <?php echo date('Y-m-d G:i:s', time())?> <?php if($debug): ?> <br />
+    Source code available: <a
+        href="https://github.com/JasonHanley/note5"
+        target="_">github.com/JasonHanley/note5</a>
+    <br /><br />
+    <?php if($debug): ?> <br />
     <a href="#" onclick="Note5.resetApplication();">Reset Application</a> <br />
     <a href="#" onclick="testerrordfunctiondoesnotexist();">Test Error</a> <br />
     <a href="#" onclick="Note5.errorHandler('Msg','Url','Line');">Test Error
