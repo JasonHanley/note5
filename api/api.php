@@ -146,13 +146,13 @@ if($action == 'log') {
         $lastWriteServer = $user['last_write'];
         
         // Retrieve ids and mod times for docs modified before local was last updated
-        $sth = $dbh->prepare('SELECT doc_id,last_write FROM docs WHERE last_write <= ?');
-        $sth->execute(array($localLastWrite));
+        $sth = $dbh->prepare('SELECT doc_id,last_write FROM docs WHERE last_write <= ? AND user_id=?');
+        $sth->execute(array($localLastWrite, $user_id));
         $oldDocs = $sth->fetchAll(PDO::FETCH_ASSOC);
         
         // Retrieve all documents modified since local was last updated
-        $sth = $dbh->prepare('SELECT * FROM docs WHERE last_write > ?');
-        $sth->execute(array($localLastWrite));
+        $sth = $dbh->prepare('SELECT * FROM docs WHERE last_write > ? AND user_id=?');
+        $sth->execute(array($localLastWrite, $user_id));
         $newDocs = $sth->fetchAll(PDO::FETCH_ASSOC);
     } else {
         $ret['error'] = 'User not found.';
