@@ -392,15 +392,21 @@ var Note5 = {
                 }
             }
             
-            // Delete old local documents not found on server
-            for(i = 0; i < deleteLocalList.length; i++) {
-                docId = deleteLocalList[i];
-                removeIndex = Note5.doc.findIndexById(docId);
-                if(removeIndex >= 0) {
-                    Note5.doc.notes.splice(removeIndex, 1);
-                    Note5.doc.docIds.splice(removeIndex, 1);
+            if(deleteLocalList.length > 0) {
+                if(confirm("Sync is about to delete "+deleteLocalList.length+
+                        " document(s). This cannot be undone.\n\nPress Ok to confirm.")) {
+                    
+                    // Delete old local documents not found on server
+                    for(i = 0; i < deleteLocalList.length; i++) {
+                        docId = deleteLocalList[i];
+                        removeIndex = Note5.doc.findIndexById(docId);
+                        if(removeIndex >= 0) {
+                            Note5.doc.notes.splice(removeIndex, 1);
+                            Note5.doc.docIds.splice(removeIndex, 1);
+                        }
+                        localStorage.removeItem(docId);
+                    }
                 }
-                localStorage.removeItem(docId);
             }
             
             var jsonUp = JSON.stringify(updateList);
@@ -639,7 +645,7 @@ var Note5 = {
                 Note5.instanceId+'">Sign out</a>');
             
             // Hide the login button
-            $('#button_login').show();
+            $('#button_login').hide();
             
             // Show the sync button
             $('#button_sync').show();
