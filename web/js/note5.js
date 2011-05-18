@@ -58,7 +58,7 @@ var Note5 = {
         $('#note').removeAttr('disabled');
         
         // Check to see if we're logged in (do this last to minimize loading delay)
-        $.get('api/?action=checklogin&instanceId='+Note5.instanceId, function(data) {Note5.setCurrentEmail(data);}, 'html'); 
+        $.get('api/?action=checklogin&instanceId='+Note5.instanceId, function(data) {Note5.setLoggedIn(data);}, 'html'); 
     },
     
     //Document subclass
@@ -251,9 +251,6 @@ var Note5 = {
                 return;
             }
         
-            // Check to see if we're logged in
-            $.get('api/?action=checklogin&instanceId='+Note5.instanceId, function(data) {Note5.setCurrentEmail(data);}, 'html'); 
-            
             // Save note content to localStorage
             this.doc.saveCurrent();
             this.pageDirty = false;
@@ -282,12 +279,19 @@ var Note5 = {
             //$('#last-write').html(Note5.lastWrite);
             //$('#status-message').append(data+'<br>');
             
-            serverData = JSON.parse(data);
+            try {
+                serverData = JSON.parse(data);
+            } catch(err) {
+                serverData = null;
+            }
             
             // Cancel sync if we don't get valid JSON
             if(!serverData) {
                 $('#status_syncing').hide();
-                $('#button_sync').show();
+                
+                // Re-check to see if we're logged in
+                $.get('api/?action=checklogin&instanceId='+Note5.instanceId, function(data) {Note5.setLoggedIn(data);}, 'html'); 
+                
                 return;
             }
             
@@ -627,18 +631,29 @@ var Note5 = {
         }        
     },
     
-    setCurrentEmail: function(email) { 
+    setLoggedIn: function(email) {
+        oldEmail = Note5.currentEmail; 
         Note5.currentEmail = email;
         if(Note5.currentEmail) { 
             $('#login').html(Note5.currentEmail+' | <a href="api/?action=logout&instanceId='+
                 Note5.instanceId+'">Sign out</a>');
             
+            // Hide the login button
+            $('#button_login').show();
+            
             // Show the sync button
             $('#button_sync').show();
             
-            // Do a sync, if necessary
-            Note5.view.refreshPage(true);
+            if(oldEmail != Note5.currentEmail) {
+                // Do a sync, if the login status has changed
+                Note5.view.refreshPage(true);
+            }
         } else {
+            $('#login').html('<a href="api/?action=glogin&instanceId='+this.instanceId+'">Sign in</a>');            
+
+            // Hide the sync button
+            $('#button_sync').hide();
+            
             // Show the login button
             $('#button_login').show();
         }
