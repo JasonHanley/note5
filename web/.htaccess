@@ -112,10 +112,6 @@ AddType application/x-chrome-extension crx
 # additionally, consider that outdated proxies may miscache 
 #   www.stevesouders.com/blog/2008/08/23/revving-filenames-dont-use-querystring/
 
-#Rules for Versioned Static Files
-# http://particletree.com/notebook/automatically-version-your-css-and-javascript-files/
-RewriteRule ^(js|css)/(.+)\.\.(.+)\.(js|css)$ $1/$2.$4 [L]
-
 # if you don't use filenames to version, lower the css and js to something like
 #   "access plus 1 week" or so
 
@@ -192,10 +188,20 @@ FileETag None
 # you probably want www.example.com to forward to example.com -- shorter URLs are sexier.
 #   no-www.org/faq.php?q=class_b
 <IfModule mod_rewrite.c>
-  RewriteEngine On
-  RewriteCond %{HTTPS} !=on
-  RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
-  RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
+    RewriteEngine On
+    RewriteCond %{HTTPS} !=on
+    RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+    RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
+  
+    #Rules for Versioned Static Files
+    # http://particletree.com/notebook/automatically-version-your-css-and-javascript-files/
+    RewriteRule ^(js|css)/(.+)\.\.(.+)\.(js|css)$ $1/$2.$4 [L]
+
+    # Use short URLs
+    RewriteCond %{HTTP_HOST} ^html5notepad.com$
+    RewriteRule ^(.*)$ http://h5note.com/$1 [R=301,L]  
+    RewriteCond %{HTTP_HOST} ^test.html5notepad.com$
+    RewriteRule ^(.*)$ http://test.h5note.com/$1 [R=301,L]  
 </IfModule>
 
 # without -MultiViews, Apache will give a 404 for a rewrite if a folder of the same name does not exist 
