@@ -251,6 +251,9 @@ var Note5 = {
                 return;
             }
         
+            // Check to see if we're logged in
+            $.get('api/?action=checklogin&instanceId='+Note5.instanceId, function(data) {Note5.setCurrentEmail(data);}, 'html'); 
+            
             // Save note content to localStorage
             this.doc.saveCurrent();
             this.pageDirty = false;
@@ -280,6 +283,13 @@ var Note5 = {
             //$('#status-message').append(data+'<br>');
             
             serverData = JSON.parse(data);
+            
+            // Cancel sync if we don't get valid JSON
+            if(!serverData) {
+                $('#status_syncing').hide();
+                $('#button_sync').show();
+                return;
+            }
             
             var oldDocId = Note5.doc.getCurrentNote().docId;
             
