@@ -34,9 +34,9 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-<title>note5</title>
+<title>h5note.com</title>
 <meta name="description"
-    content="Inspired by the iPad 'Notes' application. Very simple. Just start typing. Everything is saved to your system automatically.">
+    content="HTML5 Notepad: Inspired by the iPad 'Notes' application. Very simple. Just start typing. Everything is saved to your system automatically.">
 <meta name="author" content="Jason M. Hanley">
 
 <link rel="shortcut icon" href="favicon.ico">
