@@ -162,7 +162,7 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
 
 <script type="text/javascript">
   var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-74505-25']);
+  _gaq.push(['_setAccount', 'UA-74505-26']);
   _gaq.push(['_trackPageview']);
 
   (function() {
