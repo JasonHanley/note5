@@ -255,6 +255,15 @@ var Note5 = {
     })
   },
   
+  exportAndCopy: function() {
+      $('#exportwrapper').show();
+      json = JSON.stringify(Note5.doc.notes);
+      $('#exportcopy').val(json);
+      $('#exportcopy').focus();
+      $('#exportcopy').select();
+      $('#export_directions').html('')
+  },
+  
   resetApplication: function() {
     // Reset localstorage
     localStorage.removeItem(Note5.localStorageKey);

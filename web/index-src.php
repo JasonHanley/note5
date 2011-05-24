@@ -61,6 +61,18 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
           <li><a id="button_config" href="#" class="awesome icon"><img src="images/gnome_system.png" class="icon" alt="Config" title="Config" /></a></li>
         </ul>
 			</nav>
+            
+      <span style="color:red;"><b>Warning! </b></span>You are using an old version. 
+      <a href="#" onclick="Note5.exportAndCopy();">Click here to export your notes</a>.
+      <div id="exportwrapper" style="display:none;">
+      <br />
+      <textarea id="exportcopy" style="width: 32em; height: 12em;"></textarea>
+      <br /><br />
+      Now right click on the text above and select Copy to copy it to your clipboard, 
+      so you can paste it into the new version at <b><a href="http://h5note.com/" target="_">h5note.com</a></b>.
+      <br /><br />
+      </div>
+            
     </header>
     
     <div id="main">
@@ -79,6 +91,7 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
     <div id="config" style="display:none">
       <h2>About note5: An HTML5 Notepad</h2>
       <span style="float:left;"><img src="apple-touch-icon.png" style="width:5em; height:5em; margin:.5em;" /></span>
+      <br /><br />
       Inspired by the iPad "Notes" application.
       <br /><br />
       Very simple. Just start typing. Everything is saved to your system automatically.
