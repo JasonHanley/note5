@@ -150,7 +150,7 @@ var Note5 = {
                     for(i = 0; i < this.notes.length; i++) {
                         if(!this.notes[i].docId)
                             this.notes[i].docId = guidGenerator(); // Set id if not already set
-                        docId = this.notes[i].docId
+                        docId = this.notes[i].docId;
                         this.docIds.push(docId);
                     }
                 }
@@ -567,6 +567,28 @@ var Note5 = {
         // Reset localstorage
         localStorage.clear();
         $('#saved_message').html('Application has been reset: '+(new Date()).get8601Time());
+    },
+    
+    importOld: function() {
+        var json = $('#import_data').val();
+        if(json) {
+            data = JSON.parse(json);
+            if(data) {
+                for(i = 0; i < data.length; i++) {
+                    var newDoc = new Note5Doc();
+                    newDoc.name = data[i].name;
+                    newDoc.content = data[i].content;
+                    Note5.doc.setIndex(Note5.doc.add(newDoc)-1);
+                    Note5.doc.docIds.push(newDoc.docId);
+                }
+            }
+            
+            Note5.doc.saveLocal(); // Update docIdList
+            Note5.view.refreshPage(true);
+        }
+        
+        $('#import_old').hide();
+        $('#button_saved').click();        
     },
     
     //Resize the app window width as necessary

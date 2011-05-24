@@ -103,9 +103,14 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
     <br /><br />
     <b style="color:red;">Can't find your old notes?</b> We changed addresses. Go to the old address at 
     <a href="http://note5.jasonhanley.com" target="_">note5.jasonhanley.com</a>, 
-    sign in and synchronize. Then come back to the new address at 
-    <a href="http://h5note.com" target="_">h5note.com</a>, 
-    sign in and synchronize and you're good to go!
+    and export your notes.<br />
+    Then come back and <a href="#" onclick="$('#import_old').show();">click here to import</a>.
+    <div id="import_old" style="display:none;">
+    Paste your exported notes here:<br />
+    <textarea id="import_data" style="width:32em; height:12em;"></textarea><br />
+    <button onclick="Note5.importOld();">Import</button>
+    <br /><br />
+    </div>
     <br /><br />
     <b>Problems or suggestions?</b> 
         <a href="http://bit.ly/n5support" target="_">http://bit.ly/n5support</a>
