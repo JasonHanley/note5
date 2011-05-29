@@ -289,8 +289,7 @@ table.fileList tr.active td {
 
 #login {
     float: right;
-    margin-right: 4px;
-    margin-top: 4px;
+    margin: 4px;
 }
 
 #right_status {

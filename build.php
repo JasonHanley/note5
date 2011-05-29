@@ -66,4 +66,8 @@ if($manifestFile) {
 
 // Always rebuild index
 shell_exec('php web/index-src.php '.$debugString.' > web/index.html');
-echo "Index rebuilt.\n";
+echo "index.html rebuilt.\n";
+shell_exec('php web/index-src.php '.$debugString.' desktop > web/d.html');
+echo "d.html rebuilt.\n";
+shell_exec('php web/index-src.php '.$debugString.' mobile > web/m.html');
+echo "m.html rebuilt.\n";
