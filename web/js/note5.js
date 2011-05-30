@@ -519,6 +519,7 @@ var Note5 = {
             this.doc.setIndex(index);
             $('#'+docId).addClass('active');
             this.showNote();
+            this.view.refreshNote();
             this.view.refreshPage();
             this.doc.saveCurrent();
             $('#note').focus();
