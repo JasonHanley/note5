@@ -114,7 +114,7 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
     </div>
 </td></tr></table>
 
-<?php if(!$mobile) echo '<table style="width:100%"><tr><td id="saved_td" style="width:50%">' ?>
+<?php if(!$mobile) echo '<table id="main_table" style="width:100%"><tr><td id="saved_td" style="width:50%">' ?>
 <div id="saved">
     <div id="saved_docs"></div>
     <div id="saved_message"></div>

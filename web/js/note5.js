@@ -567,11 +567,13 @@ var Note5 = {
             Note5.view.refreshPage();
             if(mobileMode) $('#main').hide();
             $('#saved').show();
+            if(!mobileMode) $('#main_table').show();
             if(!mobileMode) $('#main').show();
             $('#config').hide();
             $('saved_docs').focus();
         });
         $('#button_config').click( function() {
+            if(!mobileMode) $('#main_table').hide();
             $('#main').hide();
             $('#saved').hide();
             $('#config').show();
