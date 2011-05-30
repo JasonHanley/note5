@@ -16,6 +16,9 @@ if(isset($_GET['desktop']) && $_GET['desktop'] || $argc > 1 && in_array('desktop
 }
 ?>
 <html <?php if(!$debug) echo 'manifest="cache.manifest"'; ?>>
+<script type="text/javascript">
+window.google_analytics_uacct = "UA-74505-26";
+</script>
 <script>
 <?php
 echo 'var debugMode = '.$debug.';';
