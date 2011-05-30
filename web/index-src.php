@@ -1,22 +1,22 @@
 <!doctype html>
 <?php
-$debug = false;
+$debug = 0;
 if(isset($_GET['debug']) && $_GET['debug'] || $argc > 1 && in_array('debug', $argv)) {
-    $debug = true;
+    $debug = 1;
 }
 echo '<script>var debugMode = '.$debug.';</script>';
 
-$mobile = false;
-$auto_mobile = true;
+$mobile = 0;
+$auto_mobile = 1;
 if(isset($_GET['mobile']) && $_GET['mobile'] || $argc > 1 && in_array('mobile', $argv)) {
-    $mobile = true;
+    $mobile = 1;
 }
 // Force desktop mode
 if(isset($_GET['desktop']) && $_GET['desktop'] || $argc > 1 && in_array('desktop', $argv)) {
-    $mobile = false;
-    $auto_mobile = false; // don't auto-switch to mobile version
+    $mobile = 0;
+    $auto_mobile = 0; // don't auto-switch to mobile version
 }
-echo '<script>var mobileMode = '.$debug.';</script>';
+echo '<script>var mobileMode = '.$mobile.';</script>';
 
 ?>
 <html <?php if(!$debug) echo 'manifest="cache.manifest"'; ?>>
@@ -63,19 +63,30 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
 <link rel="shortcut icon" href="favicon.ico">
 
 <?php if($mobile): // Mobile-only stuff ?>
-<!-- Mobile viewport optimization http://goo.gl/b9SaQ -->
-<meta name="HandheldFriendly" content="True">
-<meta name="MobileOptimized" content="320"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black" />
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="apple-touch-icon-precomposed" href="apple-touch-icon-precomposed.png">
-
-<!-- Mobile IE allows us to activate ClearType technology for smoothing fonts for easy reading -->
-<meta http-equiv="cleartype" content="on">
-
+    <!-- Mobile viewport optimization http://goo.gl/b9SaQ -->
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="apple-touch-icon-precomposed" href="apple-touch-icon-precomposed.png">
+    
+    <!-- Mobile IE allows us to activate ClearType technology for smoothing fonts for easy reading -->
+    <meta http-equiv="cleartype" content="on">
+    
+    <style>
+        textarea { overflow: auto; } /* www.sitepoint.com/blogs/2010/08/20/ie-remove-textarea-scrollbars/ */
+        
+        textarea#note {
+            margin-bottom: 30px;
+        }
+    </style>
+<?php else:  // Non-mobile stuff ?>
+    <style>
+        #saved { overflow-y: scroll; }
+    </style>
 <?php endif ?>
 
 <link rel="stylesheet" href="<?php autoVer('css/style.css')?>">
@@ -84,7 +95,9 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
 
 <body>
 
-<div id="container">
+<div id="loading">Loading h5note.com | Please wait...</div>
+
+<div id="container" style="display:none;">
 
 <table id="menu_bar"><tr><td>
     <div id="button_saved" class="button-mobile"><img src="images/gnome_home.png" class="icon" alt="Home" title="Home" /><span id="num_saved"></span></div>
@@ -98,16 +111,18 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
     </div>
 </td></tr></table>
 
-<div id="main" style="display:none;">
-    <div class="textareawrapper">
-        <textarea id="note" disabled="disabled"></textarea>
-    </div>
-</div>
-
+<?php if(!$mobile) echo '<table style="width:100%"><tr><td id="saved_td" style="width:50%">' ?>
 <div id="saved">
     <div id="saved_docs"></div>
     <div id="saved_message"></div>
 </div>
+<?php if(!$mobile) echo '</td><td id="main_td" style="width:50%; overflow-y:hidden;">' ?>
+<div id="main" <?php if($mobile) echo 'style="display:none;"' ?>>
+    <div class="textareawrapper">
+        <textarea id="note" disabled="disabled"></textarea>
+    </div>
+</div>
+<?php if(!$mobile) echo '</td></tr></table>' ?>
 
 <div id="config" style="display: none">
     <div id="login"></div>
@@ -122,11 +137,10 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
     <br /><br />
     Very simple. Just start typing. Everything is saved to your system automatically!
     <br /><br />
-    <b style="color:red;">New!</b> <b>Automatic Synchronization.</b> Just sign in with your Google account.
+    <b>Features: </b>Works offline | Mobile-optimized | Syncronizes between devices
     <br /><br />
-    Available at the <a
-        href="https://chrome.google.com/webstore/detail/olhhcobmolooljldnlapkgfnompogplm"
-        target="_">Chrome Web Store</a>
+    <b>Any reason not to give us a 5-star rating? Contact us here first:  
+        <a href="http://bit.ly/n5support" target="_">http://bit.ly/n5support</a></b>
     <br /><br />
     <b style="color:red;">Can't find your old notes?</b> We changed addresses. Go to the old address at 
     <a href="http://note5.jasonhanley.com" target="_">note5.jasonhanley.com</a>, 
@@ -139,8 +153,11 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
     <br /><br />
     </div>
     <br /><br />
-    <b>Problems or suggestions?</b> 
-        <a href="http://bit.ly/n5support" target="_">http://bit.ly/n5support</a>
+    Available at the <a
+        href="https://chrome.google.com/webstore/detail/olhhcobmolooljldnlapkgfnompogplm"
+        target="_">Chrome Web Store</a>
+    <br /><br />
+    <a href="./about/">More information about h5note.com | HTML5 Notepad</a>
     <br /><br />
     <b>Version:</b> <?php echo date('Y-m-d G:i:s', time())?>
     <br /><br />
@@ -160,7 +177,7 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
     </div>
 </div>
 
-<div style="margin-top:4px;">
+<div style="margin-top:4px; height:90px;">
 <?php if($mobile): ?>
 <script type="text/javascript"><!--
   // XHTML should not attempt to parse these strings, declare them CDATA.
@@ -179,7 +196,7 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
     <script type="text/javascript"><!--
     google_ad_client = "ca-pub-8566430800850888";
     /* note5 Desktop 468 */
-    var whichAd = parseInt(Math.random() * 2, 10);
+    var whichAd = 0;//parseInt(Math.random() * 2, 10);
     if(whichAd) {
         google_ad_slot = "4027032749";
         google_ad_width = 468;

@@ -32,9 +32,6 @@ var Note5 = {
             return;
         }
         
-        // Set up vertical auto resize handler
-        $('textarea#note').autoResize({});
-        
         // Set up note change handler
         $('textarea#note')
             .unbind('.noteChange')
@@ -53,6 +50,24 @@ var Note5 = {
         // Force a refresh immediately
         Note5.view.refreshPage(true);        
         setTimeout('Note5.view.refreshPage()', this.updateTime);
+        
+        $('#loading').hide();
+        $('#container').show();
+        
+        // Set up vertical auto resize handler
+        if(mobileMode) {
+            $('textarea#note').autoResize({});
+        } else {
+            this.onresizeDesktop();
+            $(window).resize(function() {
+                Note5.onresizeDesktop();
+              });            
+        }
+        
+        var currentNote = this.doc.getCurrentNote();
+        if(currentNote) {
+            this.cmdMakeActive(currentNote.docId);
+        }
         
         // Indicate that initialization is complete
         $('#note').removeAttr('disabled');
@@ -133,6 +148,7 @@ var Note5 = {
             currentNote = this.getCurrentNote();
             json = JSON.stringify(currentNote);
             localStorage.setItem(currentNote['docId'], json);
+            localStorage.setItem('Note5.currentDocId', this.notes[this.currentNoteIndex].docId);
         },
     
         // Load from local storage (requires HTML5 support)
@@ -168,14 +184,14 @@ var Note5 = {
             // New routine
             json = localStorage.getItem('Note5.docIds');
             if(json) {
-                data = JSON.parse(json);
+                var data = JSON.parse(json);
                 if(data) {
                     this.docIds = data;
 
                     for(i = 0; i < data.length; i++) {
-                        json = localStorage.getItem(data[i]);
+                        var json = localStorage.getItem(data[i]);
                         if(json) {
-                            note = JSON.parse(json);
+                            var note = JSON.parse(json);
                             if(note) {
                                 // Upgrade old format notes
                                 if(note.docId == undefined) {
@@ -453,7 +469,7 @@ var Note5 = {
                 var maxLength = 32;
                 if(content.length > maxLength)
                     content = content.substr(0, maxLength) + '...';
-                savedList += '<tr>' + // class="'+activeTxt+'">'+
+                savedList += '<tr id="'+docId+'" class="'+activeTxt+'">'+
                 '<td class="fileName" onclick="Note5.cmdMakeActive(\''+docId+'\');"><div style="width:9.5em;display:inline-block;"><b>'+name+'</b></div> '+content+'</td>' +
                 '<td class="button">'+
                 '<div id="button_saved" class="button-mobile" onclick="Note5.cmdRemoveConfirm(\''+docId+'\');">' +
@@ -493,11 +509,18 @@ var Note5 = {
     
     //Command: Make the selected note active
     cmdMakeActive: function(docId) {
+        var currentNote = this.doc.getCurrentNote(); 
+        if(currentNote) {
+            $('#'+currentNote.docId).removeClass('active');
+        }
+        
         var index = this.doc.findIndexById(docId);
         if(index >= 0 ) {
             this.doc.setIndex(index);
+            $('#'+docId).addClass('active');
             this.showNote();
             this.view.refreshNote();
+            this.doc.saveCurrent();
             $('#note').focus();
             $('#note').putCursorAtEnd();
         }
@@ -532,9 +555,9 @@ var Note5 = {
     },
     
     showNote: function() {
-        $('#main').show();
-        $('#saved').hide();
-        $('#config').hide();
+        if(mobileMode) $('#main').show();
+        if(mobileMode) $('#saved').hide();
+        if(mobileMode) $('#config').hide();
     },
     
     //Utility functions
@@ -542,8 +565,9 @@ var Note5 = {
         $('#button_saved').click( function() {
             // Home
             Note5.view.refreshPage();
-            $('#main').hide();
+            if(mobileMode) $('#main').hide();
             $('#saved').show();
+            if(!mobileMode) $('#main').show();
             $('#config').hide();
             $('saved_docs').focus();
         });
@@ -589,6 +613,16 @@ var Note5 = {
         
         $('#import_old').hide();
         $('#button_saved').click();        
+    },
+    
+    onresizeDesktop : function() {
+        var menuHeight = $('#menu_bar').height();
+        var viewportHeight = $(window).height();
+        var elementHeight = viewportHeight - menuHeight - 100;
+        $('#saved').height(elementHeight);
+        $('#note').height(elementHeight-16);
+        $('#saved_td').height(elementHeight);
+        $('#note_td').height(elementHeight-16);
     },
     
     //Resize the app window width as necessary

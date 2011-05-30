@@ -92,8 +92,6 @@ pre {
   padding: 15px;
 }
 
-textarea { overflow: auto; } /* www.sitepoint.com/blogs/2010/08/20/ie-remove-textarea-scrollbars/ */
-
 .iem7 legend { margin-left: -7px; }
 
 /* Align checkboxes, radios, text inputs with their label by: Thierry Koblentz tjkdesign.com/ez-css/css/base.css  */
@@ -168,8 +166,6 @@ textarea#note {
     font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace, serif;    
     width: 100%;
     padding: 2px;
-    background-color: #ffc;
-    margin-bottom: 30px;
 }
 
 textarea#note:focus {
@@ -277,14 +273,12 @@ table.fileList tr td {
 }
 
 
-table.fileList tr.active td {
-    background-color: rgb(255, 255, 138);
-    /*
+table.fileList tr.active td,textarea#note {
+    background-color: rgb(255, 255, 200); /*
     background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, rgb(250,
-        250, 250) ), color-stop(1, rgb(255, 255, 138) ) );
-    background-image: -moz-linear-gradient(center bottom, rgb(250, 250, 250)
-        0%, rgb(255, 255, 138) 100% );
-    */
+        250, 230) ), color-stop(1, rgb(255, 255, 180) ) );
+    background-image: -moz-linear-gradient(center bottom, rgb(250, 250, 230)
+        0%, rgb(255, 255, 180) 100% );*/
 }
 
 #login {
