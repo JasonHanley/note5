@@ -66,8 +66,20 @@ var Note5 = {
         
         var currentNote = this.doc.getCurrentNote();
         if(currentNote) {
+            this.view.refreshNote();
             this.cmdMakeActive(currentNote.docId);
         }
+        
+        // In mobile mode, make the document list active upon load
+        if(mobileMode) {
+            $('#button_saved').click();
+        }
+        
+        // Make sure the current note is saved upon closing the window
+        window.onbeforeunload = function() {
+            Note5.doc.updateCurrent($('#note').val());
+            Note5.doc.saveCurrent();
+        };        
         
         // Indicate that initialization is complete
         $('#note').removeAttr('disabled');
@@ -511,6 +523,8 @@ var Note5 = {
     cmdMakeActive: function(docId) {
         var currentNote = this.doc.getCurrentNote(); 
         if(currentNote) {
+            this.view.noteChanged();
+            this.view.refreshPage(true);
             $('#'+currentNote.docId).removeClass('active');
         }
         
@@ -520,7 +534,6 @@ var Note5 = {
             $('#'+docId).addClass('active');
             this.showNote();
             this.view.refreshNote();
-            this.view.refreshPage();
             this.doc.saveCurrent();
             $('#note').focus();
             $('#note').putCursorAtEnd();
@@ -621,7 +634,9 @@ var Note5 = {
     onresizeDesktop : function() {
         var menuHeight = $('#menu_bar').height();
         var viewportHeight = $(window).height();
-        var elementHeight = viewportHeight - menuHeight - 100;
+        var elementHeight = viewportHeight - menuHeight;
+        if(adsMode)
+            elementHeight -= 100;
         $('#saved').height(elementHeight);
         $('#note').height(elementHeight-16);
         $('#saved_td').height(elementHeight);

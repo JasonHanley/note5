@@ -1,5 +1,7 @@
 <!doctype html>
 <?php
+$ads = 0; // Set to 1 to enable ads, and adjust 
+
 $debug = 0;
 if(isset($_GET['debug']) && $_GET['debug'] || $argc > 1 && in_array('debug', $argv)) {
     $debug = 1;
@@ -23,6 +25,7 @@ window.google_analytics_uacct = "UA-74505-26";
 <?php
 echo 'var debugMode = '.$debug.';';
 echo 'var mobileMode = '.$mobile.';';
+echo 'var adsMode = '.$ads.';';
 ?>
 </script>
 <?php if($auto_mobile && !$debug && !$mobile) : // Auto-detect mobile browsers and redirect from index.html ?>
@@ -183,8 +186,9 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
     </div>
 </div>
 
-<div style="margin-top:4px; height:90px;">
-<?php if($mobile): ?>
+ 
+<?php if($ads && $mobile): ?>
+<div id="ads" style="margin-top:4px">
 <script type="text/javascript"><!--
   // XHTML should not attempt to parse these strings, declare them CDATA.
   /* <![CDATA[ */
@@ -197,7 +201,9 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
   /* ]]> */
 //--></script>
 <script type="text/javascript"    src="http://pagead2.googlesyndication.com/pagead/show_afmc_ads.js"></script>
-<?php else: ?>
+</div>
+<?php elseif($ads): ?>
+<div id="ads" style="margin-top:4px; height:90px;">
 <center>
     <script type="text/javascript"><!--
     google_ad_client = "ca-pub-8566430800850888";
@@ -218,8 +224,8 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
     src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
     </script>    
 </center>
-<?php endif ?>
 </div>
+<?php endif ?>
 
 <!-- <div>
 <div id="last-write"></div>
