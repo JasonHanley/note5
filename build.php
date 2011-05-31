@@ -37,6 +37,7 @@ $files = array();
 
 array_push($files, '# Version '.time());
 
+addFiles($files, '*.html');
 addFiles($files, 'favicon.ico');
 addFiles($files, 'apple-touch-icon.png');
 addFiles($files, 'apple-touch-icon-precomposed.png');
