@@ -44,6 +44,8 @@ addFiles($files, 'apple-touch-icon-precomposed.png');
 addFiles($files, 'css/style.css', true);
 addFiles($files, 'js/*.js', true);
 addFiles($files, 'images/*');
+addFiles($files, 'about/*.html');
+addFiles($files, 'about/*.png');
 
 //array_push($files, "\nFALLBACK:");
 //array_push($files, '/ offline.html');

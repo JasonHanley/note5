@@ -258,6 +258,7 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
   });
   </script>
 
+<?php if(!$debug): // don't count debug displays in analytics ?>
 <script type="text/javascript">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-74505-26']);
@@ -269,6 +270,7 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
   })();
 </script>
+<?php endif ?>
 
 </body>
 </html>
