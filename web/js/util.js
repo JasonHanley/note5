@@ -19,6 +19,22 @@ String.prototype.zeroPad = function(num) {
   return ret;
 };
 
+function stringSort(a, b) {
+    if (a < b) //sort string ascending
+        return -1; 
+    if (a > b)
+        return 1;
+    return 0;    
+}
+
+function stringSortReverse(a, b) {
+    if (a < b) //sort string descending
+        return 1; 
+    if (a > b)
+        return -1;
+    return 0;    
+}
+
 // Make a string URL-safe
 function htmlEntities(str) {
   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');

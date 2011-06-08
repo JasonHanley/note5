@@ -95,6 +95,7 @@ var Note5 = {
         docIds: [],
         currentNoteIndex: -1,
         setIndex: function(i) { this.currentNoteIndex = i; },
+        setIndexById: function(docId) { this.currentNoteIndex = this.findIndexById(docId); },
         add: function(doc) { return this.notes.push(doc); },
         getNote: function(i) { return notes[i]; },
         getNoteById: function(docId) {
@@ -126,9 +127,19 @@ var Note5 = {
             return -1;
         },
         
+        // Find index in notes array *** May be different than docIds array index
         findIndexById: function(docId) {
             for(var i = 0; i < this.notes.length; i++) {
                 if(this.notes[i].docId == docId)
+                    return i;
+            }
+            return -1;
+        },
+    
+        // Find index in docIds array
+        findDocIdIndex: function(docId) {
+            for(var i = 0; i < this.notes.length; i++) {
+                if(this.docIds[i] == docId)
                     return i;
             }
             return -1;
@@ -151,7 +162,8 @@ var Note5 = {
             }
             json = JSON.stringify(this.docIds);
             localStorage.setItem('Note5.docIds', json);
-            localStorage.setItem('Note5.currentDocId', this.notes[this.currentNoteIndex].docId);
+            if(this.currentNoteIndex >= 0)
+                localStorage.setItem('Note5.currentDocId', this.notes[this.currentNoteIndex].docId);
             localStorage.setItem('Note5.lastWrite', Note5.lastWrite);
         },
         
@@ -162,7 +174,7 @@ var Note5 = {
             localStorage.setItem(currentNote['docId'], json);
             localStorage.setItem('Note5.currentDocId', this.notes[this.currentNoteIndex].docId);
         },
-    
+        
         // Load from local storage (requires HTML5 support)
         loadLocal: function() {
             // Old routine
@@ -220,6 +232,9 @@ var Note5 = {
                             }
                         }
                     }
+                    
+                    // List documents sorted by name
+                    this.sortNotes();
                 }
             }
             var currentDocId = localStorage.getItem('Note5.currentDocId');
@@ -230,8 +245,39 @@ var Note5 = {
             
             // If it can't find the correct current note, set it to the last
             if(this.currentNoteIndex < 0 && this.notes.length > 0)
-                this.currentNoteIndex = (this.notes.length-1);
+                this.currentNoteIndex = 0;
+        },
+        
+        sortNotes: function() {
+            this.notes.sort( function(a,b) {return stringSortReverse(a.name,b.name);} );
+        },
+        
+        removeNote: function(docId) {
+            
+            // Delete the note from memory
+            var oldDocId = this.getCurrentNote().docId;
+            removeIndex = this.findIndexById(docId);
+            removeIdIndex = this.findDocIdIndex(docId);
+            if(removeIndex >= 0 && removeIdIndex >= 0) {
+                this.notes.splice(removeIndex, 1);
+                this.docIds.splice(removeIdIndex, 1);
+            }
+            
+            // Reset current index appropriately
+            oldIndex = this.findIndexById(oldDocId);
+            if(oldIndex >= 0) {
+                this.setIndex(oldIndex);
+            } else if(this.notes.length) {
+                this.setIndex(0);
+            } else {
+                this.setIndex(-1);
+            }
+            
+            // Update local storage
+            localStorage.removeItem(docId);
+            this.saveLocal();
         }
+        
     },
     
     //View subclass
@@ -264,6 +310,12 @@ var Note5 = {
             $('#status_saving').show();
             
             this.noteChangedRunning = false;
+        },
+        
+        // Copy from memory to note area
+        refreshNote: function() {
+            $('#note').val(this.doc.getCurrentNote().content);
+            $('#note').keydown(); // resize textarea    
         },
     
         // Refresh everything that needs to be updated every updateTime milliseconds
@@ -427,12 +479,7 @@ var Note5 = {
                     // Delete old local documents not found on server
                     for(i = 0; i < deleteLocalList.length; i++) {
                         docId = deleteLocalList[i];
-                        removeIndex = Note5.doc.findIndexById(docId);
-                        if(removeIndex >= 0) {
-                            Note5.doc.notes.splice(removeIndex, 1);
-                            Note5.doc.docIds.splice(removeIndex, 1);
-                        }
-                        localStorage.removeItem(docId);
+                        Note5.doc.removeNote(docId);
                     }
                 }
             }
@@ -453,6 +500,10 @@ var Note5 = {
             }
             
             Note5.doc.saveLocal(); // Persist docIdList
+            
+            // List documents sorted by name
+            Note5.doc.sortNotes();
+            
             Note5.view.refreshSavedArea();
 
             $.post('api/?action=lts', {i: Note5.instanceId, lslw: newLastWriteServer, up: jsonUp, del: jsonDel}, 
@@ -468,9 +519,7 @@ var Note5 = {
         refreshSavedArea: function() {
             var savedList = '<table class="fileList">';
             
-            // List documents in "most recently created first" order
-            // TODO: Sort by name? Otherwise sorting gets mixed up with syncing
-            for(var i = (this.doc.notes.length-1); i >= 0; i--) {
+            for(var i = 0; i < this.doc.notes.length; i++) {
                 var note = this.doc.notes[i];
                 var content = note.content;
                 var name = note.name;
@@ -500,11 +549,6 @@ var Note5 = {
             //var numDocs = this.doc.notes.length;
             //if(numDocs == 0) numDocs = '';
             //$('#num_saved').html(numDocs);
-        },
-        
-        refreshNote: function() {
-            $('#note').val(this.doc.getCurrentNote().content);
-            $('#note').keydown(); // resize textarea    
         }
         
     },
@@ -512,9 +556,12 @@ var Note5 = {
     //Command: Create a new note
     cmdNew: function() {
         var newDoc = new Note5Doc();
-        this.doc.setIndex(this.doc.add(newDoc)-1);
+        this.doc.add(newDoc);
         this.doc.docIds.push(newDoc.docId);
         this.doc.saveLocal(); // Update docIdList
+        this.doc.sortNotes();        
+        this.doc.setIndexById(newDoc.docId);
+        $('#note').val('');
         this.view.refreshPage(true);
         this.cmdMakeActive(newDoc.docId);
     },
@@ -524,7 +571,6 @@ var Note5 = {
         var currentNote = this.doc.getCurrentNote(); 
         if(currentNote) {
             this.view.noteChanged();
-            this.view.refreshPage(true);
             $('#'+currentNote.docId).removeClass('active');
         }
         
@@ -548,24 +594,14 @@ var Note5 = {
     
     //Command: Remove the selected note
     cmdRemove: function(docId) {
-        var oldDocId = this.doc.getCurrentNote().docId;
-        removeIndex = this.doc.findIndexById(docId);
-        if(removeIndex >= 0) {
-            this.doc.notes.splice(removeIndex, 1);
-            this.doc.docIds.splice(removeIndex, 1);
-        }
-        oldIndex = this.doc.findIndexById(oldDocId);
-        if(oldIndex >= 0) {
-            this.doc.setIndex(oldIndex);
-        } else if(this.doc.notes.length) {
-            this.doc.setIndex(0);
-        } else {
-            this.doc.setIndex(-1);
+        this.doc.removeNote(docId);
+        
+        if(this.doc.currentNoteIndex == -1) {
             this.cmdNew();
+        } else {
+            this.view.refreshNote();
+            this.view.refreshPage(true);
         }
-        this.doc.saveLocal(); // Update docIdList
-        this.view.refreshPage(true);
-        localStorage.removeItem(docId);
     },
     
     showNote: function() {
