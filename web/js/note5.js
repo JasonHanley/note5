@@ -156,7 +156,7 @@ var Note5 = {
             localStorage.setItem(Note5.localStorageKey, json);
             */
             // New routine
-            for(i = 0; i < this.docIds.length; i++) {
+            for(var i = 0; i < this.docIds.length; i++) {
                 json = JSON.stringify(this.notes[i]);
                 localStorage.setItem(this.notes[i].docId, json);
             }
@@ -187,7 +187,7 @@ var Note5 = {
                     this.currentNoteIndex = this.findIndexByName(currentNoteName);
                     
                     // Update docId list
-                    for(i = 0; i < this.notes.length; i++) {
+                    for(var i = 0; i < this.notes.length; i++) {
                         if(!this.notes[i].docId)
                             this.notes[i].docId = guidGenerator(); // Set id if not already set
                         docId = this.notes[i].docId;
@@ -212,7 +212,7 @@ var Note5 = {
                 if(data) {
                     this.docIds = data;
 
-                    for(i = 0; i < data.length; i++) {
+                    for(var i = 0; i < data.length; i++) {
                         var json = localStorage.getItem(data[i]);
                         if(json) {
                             var note = JSON.parse(json);
@@ -386,7 +386,7 @@ var Note5 = {
             var updateList = [];
             
             // Loop through new server notes for ones we don't have yet
-            for(i = 0; i < newDocs.length; i++) {
+            for(var i = 0; i < newDocs.length; i++) {
                 var doc = newDocs[i];
                 
                 // If we don't have a new document locally, add it
@@ -402,7 +402,7 @@ var Note5 = {
             }
             
             // Loop through old server notes
-            for(i = 0; i < oldDocs.length; i++) {
+            for(var i = 0; i < oldDocs.length; i++) {
                 var doc = oldDocs[i];
                 
                 // If we don't have an old document locally, it should be deleted from the server
@@ -414,13 +414,13 @@ var Note5 = {
             var deleteLocalList = []
             
             // Loop through all local notes
-            for(i = 0; i < Note5.doc.docIds.length; i++) {
+            for(var i = 0; i < Note5.doc.docIds.length; i++) {
                 var note = Note5.doc.notes[i];
                 
                 // If our note is out of date, and we find a match, update our copy
                 if(note.isDirty == false && note.lastWrite < lastWriteServer) {
                     var found = false;
-                    for(j = 0; j < newDocs.length; j++) {
+                    for(var j = 0; j < newDocs.length; j++) {
                         doc = newDocs[j];
                         if(note.docId == doc['doc_id']) {
                             found = true;
@@ -433,7 +433,7 @@ var Note5 = {
                     }
                     
                     // Check the old docs array too
-                    for(j = 0; j < oldDocs.length; j++) {
+                    for(var j = 0; j < oldDocs.length; j++) {
                         doc = oldDocs[j];
                         if(note.docId == doc['doc_id']) {
                             found = true;
@@ -449,7 +449,7 @@ var Note5 = {
                     if(note.isDirty) {
                         
                         var found = false;
-                        for(j = 0; j < newDocs.length; j++) {
+                        for(var j = 0; j < newDocs.length; j++) {
                             doc = newDocs[j];
                             if(note.docId == doc['doc_id']) {
                                 found = true;
@@ -477,10 +477,11 @@ var Note5 = {
                         " document(s). This cannot be undone.\n\nPress Ok to confirm.")) {
                     
                     // Delete old local documents not found on server
-                    for(i = 0; i < deleteLocalList.length; i++) {
+                    for(var i = 0; i < deleteLocalList.length; i++) {
                         docId = deleteLocalList[i];
                         Note5.doc.removeNote(docId);
                     }
+                    
                 }
             }
             
@@ -492,8 +493,10 @@ var Note5 = {
             oldIndex = Note5.doc.findIndexById(oldDocId);
             if(oldIndex >= 0) {
                 Note5.doc.setIndex(oldIndex);
+                Note5.view.refreshNote();
             } else if(Note5.doc.notes.length) {
                 Note5.doc.setIndex(0);
+                Note5.view.refreshNote();
             } else {
                 Note5.doc.setIndex(-1);
                 Note5.cmdNew();
@@ -650,7 +653,7 @@ var Note5 = {
         if(json) {
             data = JSON.parse(json);
             if(data) {
-                for(i = 0; i < data.length; i++) {
+                for(var i = 0; i < data.length; i++) {
                     var newDoc = new Note5Doc();
                     newDoc.name = data[i].name;
                     newDoc.content = data[i].content;
