@@ -1,7 +1,7 @@
 {
   "name": "HTML5 Notepad",
   "description": "HTML5 Notepad: Note down your notes quickly and easily",
-  "version": "0.6.0.0",
+  "version": "0.6.1.0",
   "app": {
     "urls": [
       "http://h5note.com/"
