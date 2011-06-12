@@ -537,17 +537,21 @@ var Note5 = {
                 if(content.length > maxLength)
                     content = content.substr(0, maxLength) + '...';
                 savedList += '<tr id="'+docId+'" class="'+activeTxt+'">'+
-                '<td class="fileName" onclick="Note5.cmdMakeActive(\''+docId+'\');"><div style="width:9.5em;display:inline-block;"><b>'+name+'</b></div> '+content+'</td>' +
-                '<td class="button"><form id="df_'+docId+'" method="post" action="api/?action=dt" style="display:inline;">'+
-                '<input type="hidden" name="fn" value="' + note.name + '">' +
-                '<input type="hidden" name="data" value="' + htmlEntities(note.content) + '">' +
-                '</form>'+
-                '<div class="button-mobile" onclick="document.forms[\'df_'+docId+'\'].submit();">' +
-                '<img src="images/gnome_text.png" class="icon" alt="Download" title="Download" /></td>' +
-                '<td class="button">'+
-                '<div class="button-mobile" onclick="Note5.cmdRemoveConfirm(\''+docId+'\');">' +
-                '<img src="images/gnome_delete.png" class="icon" alt="Remove" title="Remove" /></td>' +
-                '</tr>';
+                    '<td class="fileName" onclick="Note5.cmdMakeActive(\''+docId+'\');"><div style="width:9.5em;display:inline-block;"><b>'+name+'</b></div> '+content+'</td>';
+                
+                if(!mobileMode) {
+                    savedList += '<td class="button"><form id="df_'+docId+'" method="post" action="api/?action=dt" style="display:inline;">'+
+                    '<input type="hidden" name="fn" value="' + note.name + '">' +
+                    '<input type="hidden" name="data" value="' + htmlEntities(note.content) + '">' +
+                    '</form>'+
+                    '<div class="button-mobile" onclick="document.forms[\'df_'+docId+'\'].submit();">' +
+                    '<img src="images/gnome_text.png" class="icon" alt="Download" title="Download" /></td>';
+                }
+                
+                savedList += '<td class="button">'+
+                    '<div class="button-mobile" onclick="Note5.cmdRemoveConfirm(\''+docId+'\');">' +
+                    '<img src="images/gnome_delete.png" class="icon" alt="Remove" title="Remove" /></td>' +
+                    '</tr>';
             }
             savedList += '</table>'+"\n";
             $('#saved_docs').html(savedList);
