@@ -20,6 +20,9 @@ var Note5 = {
         this.doc.view = this.view;
         this.view.doc = this.doc;
         
+        $('#button_login').hide();
+        $('#button_sync').hide();
+        
         // Generate or load application unique identifier
         this.getInstanceId();
     
