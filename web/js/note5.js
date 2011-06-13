@@ -493,6 +493,9 @@ var Note5 = {
 
             Note5.lastWrite = newLastWriteServer;
             
+            // Make sure notes are sorted before getting indices
+            Note5.doc.sortNotes();
+            
             oldIndex = Note5.doc.findIndexById(oldDocId);
             if(oldIndex >= 0) {
                 Note5.doc.setIndex(oldIndex);
@@ -506,9 +509,6 @@ var Note5 = {
             }
             
             Note5.doc.saveLocal(); // Persist docIdList
-            
-            // List documents sorted by name
-            Note5.doc.sortNotes();
             
             Note5.view.refreshSavedArea();
 
