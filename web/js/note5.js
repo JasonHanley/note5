@@ -51,7 +51,7 @@ var Note5 = {
         }
     
         // Force a refresh immediately
-        Note5.view.refreshPage(true);        
+        Note5.view.autoRefreshPage(true);        
         
         $('#loading').hide();
         $('#container').show();
@@ -323,8 +323,14 @@ var Note5 = {
             $('#note').val(this.doc.getCurrentNote().content);
             $('#note').keydown(); // resize textarea    
         },
-    
+        
         // Refresh everything that needs to be updated every updateTime milliseconds
+        autoRefreshPage: function(force) {
+            Note5.view.refreshPage();
+            setTimeout('Note5.view.autoRefreshPage('+force+')', Note5.updateTime);
+        },
+    
+        // Refresh the page and do a sync if necessary
         refreshPage: function(force) {
             
             if(Note5.view.updateRunning) return;
@@ -359,7 +365,6 @@ var Note5 = {
             //date = new Date();
             //console.log('refreshPage '+date.get8601Date() + '.' + date.get8601Time());
         
-            setTimeout('Note5.view.refreshPage()', Note5.updateTime);
             Note5.view.updateRunning = false;
         },
         
