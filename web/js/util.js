@@ -81,6 +81,12 @@ Element.prototype.resize = function() {
   }
 };
 
+function debugLog(msg) {
+    var date = new Date();
+    if(debugMode) console.log(date.get8601Date() + ' ' + date.get8601Time()+': '+msg);
+}
+
+
 var CacheHelper = {
   getTextStatus: function() {
     var appCache = window.applicationCache;

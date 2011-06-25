@@ -1,6 +1,6 @@
 //Note5 Document class
 var Note5Doc = function() {
-    date = new Date();
+    var date = new Date();
     this.name = date.get8601Date() + ' ' + date.get8601Time();
     this.content = '';
     this.docId = guidGenerator();
@@ -52,7 +52,6 @@ var Note5 = {
     
         // Force a refresh immediately
         Note5.view.refreshPage(true);        
-        setTimeout('Note5.view.refreshPage()', this.updateTime);
         
         $('#loading').hide();
         $('#container').show();
@@ -292,14 +291,16 @@ var Note5 = {
         
         // Called when the note text area is changed
         noteChanged: function() {
-            if(this.noteChangedRunning) return;
-            this.noteChangedRunning = true;
+            if(Note5.view.noteChangedRunning) return;
+            Note5.view.noteChangedRunning = true;
+            
+            debugLog('noteChanged()');
 
             var noteVal = $('#note').val();
 
             var currentNote = Note5.doc.getCurrentNote();
             if(currentNote == null || noteVal == currentNote.content) {
-                this.noteChangedRunning = false;
+                Note5.view.noteChangedRunning = false;
                 return;
             }
             
@@ -312,27 +313,31 @@ var Note5 = {
             Note5.view.pageDirty = true;
             $('#status_saving').show();
             
-            this.noteChangedRunning = false;
+            Note5.view.noteChangedRunning = false;
         },
         
         // Copy from memory to note area
         refreshNote: function() {
+            debugLog('refreshNote()');
+            
             $('#note').val(this.doc.getCurrentNote().content);
             $('#note').keydown(); // resize textarea    
         },
     
         // Refresh everything that needs to be updated every updateTime milliseconds
         refreshPage: function(force) {
-            if(this.updateRunning) return;
-            this.updateRunning = true;
+            
+            if(Note5.view.updateRunning) return;
+            Note5.view.updateRunning = true;
             
             // If text hasn't changed since last update, return
             var noteVal = $('#note').val();
             if(!force && !this.pageDirty) {
                 setTimeout('Note5.view.refreshPage()', Note5.updateTime);
-                this.updateRunning = false;
+                Note5.view.updateRunning = false;
                 return;
             }
+            debugLog('refreshPage('+force+')');
         
             // Save note content to localStorage
             this.doc.saveCurrent();
@@ -355,10 +360,12 @@ var Note5 = {
             //console.log('refreshPage '+date.get8601Date() + '.' + date.get8601Time());
         
             setTimeout('Note5.view.refreshPage()', Note5.updateTime);
-            this.updateRunning = false;
+            Note5.view.updateRunning = false;
         },
         
         serverToLocalProcess: function(data) {
+            debugLog('serverToLocalProcess()');
+            
             //$('#last-write').html(Note5.lastWrite);
             //$('#status-message').append(data+'<br>');
             
@@ -497,15 +504,19 @@ var Note5 = {
             Note5.doc.sortNotes();
             
             oldIndex = Note5.doc.findIndexById(oldDocId);
-            if(oldIndex >= 0) {
-                Note5.doc.setIndex(oldIndex);
-                Note5.view.refreshNote();
-            } else if(Note5.doc.notes.length) {
-                Note5.doc.setIndex(0);
-                Note5.view.refreshNote();
-            } else {
-                Note5.doc.setIndex(-1);
-                Note5.cmdNew();
+            currentIndex = Note5.doc.currentNoteIndex;
+            
+            if(currentIndex != oldIndex) {
+                if(oldIndex >= 0) {
+                    Note5.doc.setIndex(oldIndex);
+                    Note5.view.refreshNote();
+                } else if(Note5.doc.notes.length) {
+                    Note5.doc.setIndex(0);
+                    Note5.view.refreshNote();
+                } else {
+                    Note5.doc.setIndex(-1);
+                    Note5.cmdNew();
+                }
             }
             
             Note5.doc.saveLocal(); // Persist docIdList
@@ -523,6 +534,8 @@ var Note5 = {
     
         //Refresh the 'Saved' tab
         refreshSavedArea: function() {
+            debugLog('refreshSavedArea()');
+            
             var savedList = '<table class="fileList">';
             
             for(var i = 0; i < this.doc.notes.length; i++) {
