@@ -38,7 +38,7 @@ var Note5 = {
         // Set up note change handler
         $('textarea#note')
             .unbind('.noteChange')
-            .bind('keyup.noteChange', this.view.noteChanged)
+            //.bind('keyup.noteChange', this.view.noteChanged)
             .bind('keydown.noteChange', this.view.noteChanged)
             .bind('change.noteChange', this.view.noteChanged);
 
