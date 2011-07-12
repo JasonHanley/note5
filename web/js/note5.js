@@ -50,9 +50,6 @@ var Note5 = {
             this.cmdNew();
         }
     
-        // Force a refresh immediately
-        Note5.view.autoRefreshPage(true);        
-        
         $('#loading').hide();
         $('#container').show();
         
@@ -71,6 +68,9 @@ var Note5 = {
             this.view.refreshNote();
             this.cmdMakeActive(currentNote.docId);
         }
+
+        // Force a refresh immediately
+        Note5.view.autoRefreshPage(true);        
         
         // In mobile mode, make the document list active upon load
         if(mobileMode) {
@@ -325,9 +325,11 @@ var Note5 = {
         },
         
         // Refresh everything that needs to be updated every updateTime milliseconds
+        // The first one is forced if force==true
         autoRefreshPage: function(force) {
-            Note5.view.refreshPage();
-            setTimeout('Note5.view.autoRefreshPage('+force+')', Note5.updateTime);
+            //debugLog('autoRefreshPage('+force+')?');
+            Note5.view.refreshPage(force);
+            setTimeout('Note5.view.autoRefreshPage()', Note5.updateTime);
         },
     
         // Refresh the page and do a sync if necessary
@@ -335,11 +337,12 @@ var Note5 = {
             
             if(Note5.view.updateRunning) return;
             Note5.view.updateRunning = true;
-            
+
+            //debugLog('refreshPage('+force+')?');
+
             // If text hasn't changed since last update, return
             var noteVal = $('#note').val();
             if(!force && !this.pageDirty) {
-                setTimeout('Note5.view.refreshPage()', Note5.updateTime);
                 Note5.view.updateRunning = false;
                 return;
             }
