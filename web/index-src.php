@@ -1,18 +1,20 @@
 <!doctype html>
 <?php
-$ads = 1; // Set to 1 to enable ads, and adjust 
+$ads = 1; // Set to 1 to enable ads, and adjust
 
 $debug = 0;
-if(isset($_GET['debug']) && $_GET['debug'] || $argc > 1 && in_array('debug', $argv)) {
+if(isset($_GET['debug']) && $_GET['debug'] || isset($argc) && $argc > 1 && in_array('debug', $argv)) {
     $debug = 1;
 }
+if($debug == 1)
+    $ads = 0;
 $mobile = 0;
 $auto_mobile = 1;
-if(isset($_GET['mobile']) && $_GET['mobile'] || $argc > 1 && in_array('mobile', $argv)) {
+if(isset($_GET['mobile']) && $_GET['mobile'] || isset($argc) && $argc > 1 && in_array('mobile', $argv)) {
     $mobile = 1;
 }
 // Force desktop mode
-if(isset($_GET['desktop']) && $_GET['desktop'] || $argc > 1 && in_array('desktop', $argv)) {
+if(isset($_GET['desktop']) && $_GET['desktop'] || isset($argc) && $argc > 1 && in_array('desktop', $argv)) {
     $mobile = 0;
     $auto_mobile = 0; // don't auto-switch to mobile version
 }
@@ -54,7 +56,6 @@ function autoVer($url) {
 }
 
 $abspath = dirname(__FILE__);
-$path = pathinfo($url);
 $ver = filemtime($abspath);
 
 echo '<script>var note5fileVersion='.$ver.';</script>';
