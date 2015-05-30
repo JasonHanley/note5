@@ -8,4 +8,6 @@
 /api/config-local.php
 /web/index.html
 /web/cache.manifest
+/web/d.html
+/web/m.html
 /api/data.sql

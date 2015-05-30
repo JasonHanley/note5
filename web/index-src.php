@@ -20,6 +20,7 @@ if(isset($_GET['desktop']) && $_GET['desktop'] || isset($argc) && $argc > 1 && i
 }
 ?>
 <html <?php if(!$debug) echo 'manifest="cache.manifest"'; ?>>
+<head>
 <script type="text/javascript">
 window.google_analytics_uacct = "UA-74505-26";
 </script>
@@ -61,7 +62,9 @@ $ver = filemtime($abspath);
 echo '<script>var note5fileVersion='.$ver.';</script>';
 
 ?>
-<head>
+<meta name="google-signin-scope" content="profile email">
+<meta name="google-signin-client_id" content="470733428952-vigq8purblf1j8fq5etd8rcikia1p71b.apps.googleusercontent.com">
+<script src="https://apis.google.com/js/platform.js" async defer></script>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
@@ -113,8 +116,9 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
     <div id="button_saved" class="button-mobile"><img src="images/gnome_home.png" class="icon" alt="Home" title="Home" /><span id="num_saved"></span></div>
     <div id="button_new" class="button-mobile"><img src="images/gnome_new.png" class="icon" alt="New" title="New" /></div>
     <div id="button_config" class="button-mobile"><img src="images/gnome_system.png" class="icon" alt="Config" title="Config" /></div>
-    <div id="button_login" class="button-mobile"><img src="images/g_favicon.png" class="icon" alt="Sign in" title="Sign in" /></div>
+    <!--<div id="button_login" class="button-mobile"><img src="images/g_favicon.png" class="icon" alt="Sign in" title="Sign in" /></div>-->
     <div id="button_sync" class="button-mobile"><img src="images/gnome_sync.png" class="icon" alt="Sync" title="Sync" /></div>
+    <div class="g-signin2" data-onsuccess="onSignIn" data-theme="light"  style="display:inline-block;vertical-align: middle;"></div>
     <div id="right_status">
         <img id="status_saving" src="images/gnome_saving.png" class="icon" style="display:none;" />
         <img id="status_syncing" src="images/gnome_syncing.png" class="icon" style="display:none;" />
@@ -254,7 +258,26 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
 <script src="<?php autoVer('js/util.js')?>"></script>
 <script src="<?php autoVer('js/note5.js')?>"></script>
 <script>
+
+    function onSignIn(googleUser) {
+        var profile = googleUser.getBasicProfile();
+        var user_id = profile.getId();
+        var email = profile.getEmail();
+        var name = profile.getName();
+        // The ID token you need to pass to your backend:
+        var id_token = googleUser.getAuthResponse().id_token;
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'api/?action=tokensignin');
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onload = function() {
+            console.log('Signed in as: ' + xhr.responseText);
+        };
+        xhr.send('instanceId='+Note5.instanceId+'&id_token='+id_token+'&email='+email+'&user_id='+user_id+'&name='+encodeURIComponent(name));
+    };
+
     $(document).ready(function () {
+
       Note5.init();    
   });
   </script>

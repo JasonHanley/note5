@@ -327,9 +327,9 @@ var Note5 = {
         // Refresh everything that needs to be updated every updateTime milliseconds
         // The first one is forced if force==true
         autoRefreshPage: function(force) {
-            //debugLog('autoRefreshPage('+force+')?');
+            //debugLog('autoRefreshPage('+force+')');
             Note5.view.refreshPage(force);
-            setTimeout('Note5.view.autoRefreshPage()', Note5.updateTime);
+            setTimeout('Note5.view.autoRefreshPage(false)', Note5.updateTime);
         },
     
         // Refresh the page and do a sync if necessary
@@ -783,8 +783,8 @@ var Note5 = {
         oldEmail = Note5.currentEmail; 
         Note5.currentEmail = email;
         if(Note5.currentEmail) { 
-            $('#login').html(Note5.currentEmail+' | <a href="api/?action=logout&instanceId='+
-                Note5.instanceId+'">Sign out</a>');
+            $('#login').html(Note5.currentEmail+' | <a href="#" ' +
+                'onclick="gapi.auth2.getAuthInstance().signOut().then(function() { window.location = \'api/?action=logout&instanceId='+Note5.instanceId+'\';  }); return false;">Sign out</a>');
             
             // Hide the login button
             $('#button_login').hide();

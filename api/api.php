@@ -58,7 +58,46 @@ if($action == 'log') {
     if($users && count($users)) {
         print $users[0]['email'];
     }
-    
+
+} elseif($action == 'tokensignin') {
+
+    $instanceId = $_POST['instanceId'];
+    $email = $_POST['email'];
+    $identity = $_POST['user_id'];
+    $name = $_POST['name'];
+    $url = 'https://www.googleapis.com/oauth2/v1/tokeninfo?id_token='.$_POST['id_token'];
+
+    $result_json = file_get_contents($url);
+    $result = json_decode($result_json);
+
+    if($result && $result->audience == '470733428952-vigq8purblf1j8fq5etd8rcikia1p71b.apps.googleusercontent.com')
+    {
+        $sth = $dbh->query('SELECT id FROM user WHERE email="'.$email.'"');
+        $user = $sth->fetch();
+        if($user) {
+            $userId = $user['id'];
+            $dbh->query('UPDATE user SET last_login="'.date('Y-m-d H:i:s', time()).'" WHERE id='.$userId);
+        } else {
+            $sth = $dbh->prepare('INSERT INTO user (identity, email, last_login, attrs) VALUES (?, ?, ?, ?)');
+            $sth->execute(array($identity, $email, date('Y-m-d H:i:s', time()), '{}'));
+            $userId = $dbh->lastInsertId();
+        }
+
+        // Does this instance already have an association? If so, delete it.
+        $sth = $dbh->query('SELECT user_id,instance FROM user_instance WHERE instance="'.$instanceId.'"');
+        $instance = $sth->fetch();
+        if($instance) {
+            $dbh->query('DELETE FROM user_instance WHERE user_id='.$instance['user_id'].' AND instance="'.$instance['instance'].'"');
+        }
+
+        $sth = $dbh->prepare('INSERT INTO user_instance (user_id, instance) VALUES (?, ?)');
+        $sth->execute(array($userId, $instanceId));
+
+        echo $email;
+    }
+    else
+        echo 'signin failure';
+
 } elseif($action == 'glogin') { // Google Authentication (OpenID)
 
     $instanceId = $_REQUEST['instanceId'];
