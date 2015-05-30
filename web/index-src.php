@@ -1,6 +1,6 @@
 <!doctype html>
 <?php
-$ads = 0; // Set to 1 to enable ads, and adjust 
+$ads = 1; // Set to 1 to enable ads, and adjust 
 
 $debug = 0;
 if(isset($_GET['debug']) && $_GET['debug'] || $argc > 1 && in_array('debug', $argv)) {
