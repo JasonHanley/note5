@@ -272,6 +272,7 @@ echo '<script>var note5fileVersion='.$ver.';</script>';
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.onload = function() {
             console.log('Signed in as: ' + xhr.responseText);
+            $.get('api/?action=checklogin&instanceId='+Note5.instanceId, function(data) {Note5.setLoggedIn(data);}, 'html');
         };
         xhr.send('instanceId='+Note5.instanceId+'&id_token='+id_token+'&email='+email+'&user_id='+user_id+'&name='+encodeURIComponent(name));
     };
